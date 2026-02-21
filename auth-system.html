@@ -1931,6 +1931,9 @@
         border-color: #f08080 !important;
       }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-database-compat.js"></script>
   </head>
   <body>
     <div class="app-container" id="appContainer">
@@ -2397,6 +2400,34 @@
 
     <script>
       // =========================================
+      // Firebase 초기화
+      // =========================================
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBAf42FRejA27Inv76z1qQOL9rHdr7-QcE",
+        authDomain: "yumi-student.firebaseapp.com",
+        databaseURL: "https://yumi-student-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "yumi-student",
+        storageBucket: "yumi-student.firebasestorage.app",
+        messagingSenderId: "248222829485",
+        appId: "1:248222829485:web:b7f0bbaed4163c57fbaf24"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+
+      // =========================================
+      // 메모리 캐시 (Firebase 동기화용)
+      // =========================================
+
+      let _usersCache = [];
+      let _noticesCache = [];
+      let _reviewsCache = [];
+      let _firebaseReady = false;
+      /** 현재 활성화된 화면 ID (실시간 갱신용) */
+      let _currentScreen = null;
+
+      // =========================================
       // 상수 및 설정
       // =========================================
 
@@ -2406,13 +2437,13 @@
        */
       const ADMIN_PASSWORD = 'admin1234';
 
-      /** localStorage 키: 가입 사용자 배열 */
+      /** localStorage 키 (하위 호환용) */
       const USERS_STORAGE_KEY = 'auth-system-users';
 
-      /** localStorage 키: 한줄평 배열 */
+      /** localStorage 키 (하위 호환용) */
       const REVIEWS_STORAGE_KEY = 'auth-system-reviews';
 
-      /** localStorage 키: 공지사항 배열 */
+      /** localStorage 키 (하위 호환용) */
       const NOTICES_STORAGE_KEY = 'auth-system-notices';
 
       /** 공지사항 최대 글자 수 */
@@ -2472,26 +2503,18 @@
        * @returns {Array<{ id: string, grade: string, classNum: string, name: string, password: string }>}
        */
       function loadUsersFromStorage() {
-        try {
-          const raw = localStorage.getItem(USERS_STORAGE_KEY);
-          if (!raw) return [];
-          const parsed = JSON.parse(raw);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
+        return _usersCache;
       }
 
       /**
-       * 사용자 배열을 localStorage에 저장합니다.
+       * 사용자 배열을 캐시 + Firebase에 저장합니다.
        * @param {Array} users
        */
       function saveUsersToStorage(users) {
-        try {
-          localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-        } catch {
-          console.warn('사용자 데이터 저장에 실패했습니다.');
-        }
+        _usersCache = users;
+        db.ref('users').set(users).catch(err => {
+          console.warn('사용자 데이터 Firebase 저장 실패:', err);
+        });
       }
 
       /**
@@ -2569,26 +2592,18 @@
        * }>}
        */
       function loadNoticesFromStorage() {
-        try {
-          const raw = localStorage.getItem(NOTICES_STORAGE_KEY);
-          if (!raw) return [];
-          const parsed = JSON.parse(raw);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
+        return _noticesCache;
       }
 
       /**
-       * 공지사항 배열을 localStorage에 저장합니다.
+       * 공지사항 배열을 캐시 + Firebase에 저장합니다.
        * @param {Array} notices
        */
       function saveNoticesToStorage(notices) {
-        try {
-          localStorage.setItem(NOTICES_STORAGE_KEY, JSON.stringify(notices));
-        } catch {
-          console.warn('공지사항 데이터 저장에 실패했습니다.');
-        }
+        _noticesCache = notices;
+        db.ref('notices').set(notices).catch(err => {
+          console.warn('공지사항 데이터 Firebase 저장 실패:', err);
+        });
       }
 
       /**
@@ -2697,26 +2712,18 @@
        * }>}
        */
       function loadReviewsFromStorage() {
-        try {
-          const raw = localStorage.getItem(REVIEWS_STORAGE_KEY);
-          if (!raw) return [];
-          const parsed = JSON.parse(raw);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
+        return _reviewsCache;
       }
 
       /**
-       * 한줄평 배열을 localStorage에 저장합니다.
+       * 한줄평 배열을 캐시 + Firebase에 저장합니다.
        * @param {Array} reviews
        */
       function saveReviewsToStorage(reviews) {
-        try {
-          localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(reviews));
-        } catch {
-          console.warn('한줄평 데이터 저장에 실패했습니다.');
-        }
+        _reviewsCache = reviews;
+        db.ref('reviews').set(reviews).catch(err => {
+          console.warn('한줄평 데이터 Firebase 저장 실패:', err);
+        });
       }
 
       /**
@@ -2834,6 +2841,7 @@
        * @param {string} screenId - SCREENS 상수 중 하나의 값
        */
       function navigateTo(screenId) {
+        _currentScreen = screenId;
         Object.values(SCREENS).forEach((id) => {
           const el = document.getElementById(id);
           if (el) el.classList.remove('active');
@@ -4397,6 +4405,107 @@
       // 앱 초기화
       // =========================================
 
+      // =========================================
+      // Firebase 리스너 (실시간 동기화)
+      // =========================================
+
+      /**
+       * Firebase Realtime Database 리스너를 설정합니다.
+       * 다른 기기에서 데이터가 변경되면 캐시를 갱신하고 현재 화면을 다시 렌더링합니다.
+       */
+      function initFirebaseListeners() {
+        db.ref('users').on('value', snap => {
+          _usersCache = snap.val() || [];
+          // 관리자 대시보드에서 사용자 목록 실시간 갱신
+          if (_currentScreen === SCREENS.ADMIN_DASHBOARD) {
+            try { renderUserList(); } catch(e) {}
+          }
+        });
+
+        db.ref('notices').on('value', snap => {
+          _noticesCache = snap.val() || [];
+          // 사용자 홈에서 공지사항 실시간 갱신
+          if (_currentScreen === SCREENS.USER_HOME && currentUser) {
+            try { renderUserNoticeCard(currentUser); } catch(e) {}
+          }
+          // 관리자 대시보드에서 공지사항 실시간 갱신
+          if (_currentScreen === SCREENS.ADMIN_DASHBOARD) {
+            try { renderAdminNoticeSection(); } catch(e) {}
+          }
+        });
+
+        db.ref('reviews').on('value', snap => {
+          _reviewsCache = snap.val() || [];
+          // 사용자 홈에서 한줄평 실시간 갱신
+          if (_currentScreen === SCREENS.USER_HOME && currentUser) {
+            try { renderDiaryView(currentUser); } catch(e) {}
+          }
+          // 관리자 대시보드에서 한줄평 실시간 갱신
+          if (_currentScreen === SCREENS.ADMIN_DASHBOARD) {
+            try {
+              const dateKey = document.getElementById('adminReviewDateFilter').value;
+              if (dateKey) renderAdminReviewList(dateKey);
+            } catch(e) {}
+          }
+        });
+      }
+
+      /**
+       * Firebase에서 초기 데이터를 한 번 로드한 뒤 앱을 시작합니다.
+       * 기존 localStorage 데이터가 있으면 Firebase로 마이그레이션합니다.
+       */
+      async function initFirebaseData() {
+        try {
+          const [usersSnap, noticesSnap, reviewsSnap] = await Promise.all([
+            db.ref('users').once('value'),
+            db.ref('notices').once('value'),
+            db.ref('reviews').once('value'),
+          ]);
+
+          _usersCache   = usersSnap.val()   || [];
+          _noticesCache  = noticesSnap.val()  || [];
+          _reviewsCache  = reviewsSnap.val()  || [];
+
+          // localStorage에 데이터가 있고 Firebase가 비어있으면 마이그레이션
+          if (_usersCache.length === 0) {
+            try {
+              const localUsers = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
+              if (localUsers.length > 0) {
+                _usersCache = localUsers;
+                await db.ref('users').set(localUsers);
+              }
+            } catch(e) {}
+          }
+          if (_noticesCache.length === 0) {
+            try {
+              const localNotices = JSON.parse(localStorage.getItem(NOTICES_STORAGE_KEY) || '[]');
+              if (localNotices.length > 0) {
+                _noticesCache = localNotices;
+                await db.ref('notices').set(localNotices);
+              }
+            } catch(e) {}
+          }
+          if (_reviewsCache.length === 0) {
+            try {
+              const localReviews = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]');
+              if (localReviews.length > 0) {
+                _reviewsCache = localReviews;
+                await db.ref('reviews').set(localReviews);
+              }
+            } catch(e) {}
+          }
+
+          _firebaseReady = true;
+        } catch (err) {
+          console.warn('Firebase 초기 로드 실패, localStorage 폴백:', err);
+          // Firebase 연결 실패 시 localStorage에서 로드
+          try { _usersCache = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]'); } catch(e) { _usersCache = []; }
+          try { _noticesCache = JSON.parse(localStorage.getItem(NOTICES_STORAGE_KEY) || '[]'); } catch(e) { _noticesCache = []; }
+          try { _reviewsCache = JSON.parse(localStorage.getItem(REVIEWS_STORAGE_KEY) || '[]'); } catch(e) { _reviewsCache = []; }
+          _firebaseReady = true;
+        }
+      }
+
       /**
        * 앱 전체의 이벤트 리스너를 등록하고 초기 화면을 설정합니다.
        */
@@ -4562,8 +4671,29 @@
         navigateTo(SCREENS.MAIN);
       }
 
-      // DOM이 완전히 로드된 후 앱 초기화 실행
-      document.addEventListener('DOMContentLoaded', initApp);
+      // DOM이 완전히 로드된 후 Firebase 데이터 로드 → 앱 초기화 실행
+      document.addEventListener('DOMContentLoaded', async () => {
+        // 로딩 표시
+        const container = document.getElementById('appContainer');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'firebaseLoading';
+        loadingDiv.style.cssText = 'text-align:center;padding:60px 20px;color:var(--color-text-secondary);font-size:1.1rem;';
+        loadingDiv.innerHTML = '🌸 데이터를 불러오는 중...';
+        container.prepend(loadingDiv);
+
+        // Firebase 데이터 로드
+        await initFirebaseData();
+
+        // 로딩 화면 제거
+        const loadEl = document.getElementById('firebaseLoading');
+        if (loadEl) loadEl.remove();
+
+        // 앱 초기화 (이벤트 리스너 등록 + 초기 화면)
+        initApp();
+
+        // Firebase 실시간 리스너 시작
+        initFirebaseListeners();
+      });
     </script>
   </body>
 </html>
