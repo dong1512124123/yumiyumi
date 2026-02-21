@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>유미를 위한 할 일 목록</title>
+    <style>
+      /* ===========================
+         전역 스타일 초기화 및 기본값
+         =========================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --color-primary: #4f46e5;
+        --color-primary-hover: #4338ca;
+        --color-primary-light: #eef2ff;
+        --color-danger: #ef4444;
+        --color-danger-hover: #dc2626;
+        --color-success: #22c55e;
+        --color-text-primary: #111827;
+        --color-text-secondary: #6b7280;
+        --color-text-muted: #9ca3af;
+        --color-border: #e5e7eb;
+        --color-bg: #f3f4f6;
+        --color-surface: #ffffff;
+        --color-done-bg: #f9fafb;
+        --color-done-text: #9ca3af;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.13);
+        --radius-sm: 8px;
+        --radius-md: 14px;
+        --radius-lg: 20px;
+        --transition: 0.2s ease;
+      }
+
+      body {
+        font-family: 'Segoe UI', 'Apple SD Gothic Neo', '맑은 고딕', sans-serif;
+        background: var(--color-bg);
+        color: var(--color-text-primary);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 48px 16px 80px;
+      }
+
+      /* ===========================
+         메인 컨테이너
+         =========================== */
+      .app-container {
+        width: 100%;
+        max-width: 560px;
+      }
+
+      /* 앱 헤더 영역 */
+      .app-header {
+        margin-bottom: 24px;
+        text-align: center;
+      }
+
+      .app-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        letter-spacing: -0.5px;
+      }
+
+      .app-header p {
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: var(--color-text-secondary);
+      }
+
+      /* ===========================
+         탭 네비게이션
+         =========================== */
+      .tab-nav {
+        display: flex;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: 5px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+        gap: 4px;
+      }
+
+      .tab-button {
+        flex: 1;
+        background: none;
+        border: none;
+        border-radius: var(--radius-md);
+        padding: 11px 16px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+      }
+
+      .tab-button:hover {
+        color: var(--color-primary);
+        background: var(--color-primary-light);
+      }
+
+      .tab-button.active {
+        background: var(--color-primary);
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* ===========================
+         탭 패널 (공통)
+         =========================== */
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+        animation: fadeIn 0.18s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ===========================
+         입력 폼 카드 (오늘 할 일 탭)
+         =========================== */
+      .input-card {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        box-shadow: var(--shadow-md);
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .todo-time-input {
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 12px 12px;
+        font-size: 0.95rem;
+        color: var(--color-text-primary);
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        background: var(--color-bg);
+        font-family: inherit;
+        width: 130px;
+        cursor: pointer;
+      }
+
+      .todo-time-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        background: var(--color-surface);
+      }
+
+      .todo-input {
+        flex: 1;
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        color: var(--color-text-primary);
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        background: var(--color-bg);
+      }
+
+      .todo-input::placeholder {
+        color: var(--color-text-muted);
+      }
+
+      .todo-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        background: var(--color-surface);
+      }
+
+      .add-button {
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+        white-space: nowrap;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .add-button:hover {
+        background: var(--color-primary-hover);
+        box-shadow: var(--shadow-md);
+      }
+
+      .add-button:active {
+        transform: scale(0.97);
+      }
+
+      /* ===========================
+         요약 통계 바
+         =========================== */
+      .summary-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 4px;
+        margin-bottom: 14px;
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+      }
+
+      .summary-bar .count-badge {
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 0.8rem;
+      }
+
+      .clear-done-button {
+        background: none;
+        border: none;
+        color: var(--color-danger);
+        font-size: 0.82rem;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: var(--radius-sm);
+        transition: background var(--transition);
+        font-weight: 600;
+      }
+
+      .clear-done-button:hover {
+        background: #fee2e2;
+      }
+
+      .clear-done-button:disabled {
+        color: var(--color-text-muted);
+        cursor: default;
+        background: none;
+      }
+
+      /* ===========================
+         할 일 목록 컨테이너
+         =========================== */
+      .todo-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* 빈 상태 안내 메시지 */
+      .empty-state {
+        text-align: center;
+        padding: 56px 20px;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .empty-state .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+      }
+
+      .empty-state p {
+        color: var(--color-text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .empty-state p strong {
+        color: var(--color-primary);
+      }
+
+      /* ===========================
+         개별 할 일 아이템
+         =========================== */
+      .todo-item {
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: var(--shadow-sm);
+        border: 1.5px solid transparent;
+        transition:
+          box-shadow var(--transition),
+          border-color var(--transition),
+          background var(--transition),
+          opacity var(--transition),
+          transform var(--transition);
+        animation: slideIn 0.22s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .todo-item:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--color-border);
+      }
+
+      /* 완료 상태 아이템 스타일 */
+      .todo-item.completed {
+        background: var(--color-done-bg);
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      .todo-item.completed .todo-text {
+        text-decoration: line-through;
+        color: var(--color-done-text);
+      }
+
+      /* 체크박스 커스텀 스타일 */
+      .todo-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        border: 2px solid var(--color-border);
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        transition: border-color var(--transition), background var(--transition);
+        background: var(--color-surface);
+      }
+
+      .todo-checkbox:hover {
+        border-color: var(--color-primary);
+      }
+
+      .todo-checkbox:checked {
+        background: var(--color-success);
+        border-color: var(--color-success);
+      }
+
+      /* 체크 표시 (의사 요소 활용) */
+      .todo-checkbox:checked::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 7px;
+        height: 12px;
+        border: 2.5px solid #fff;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg);
+      }
+
+      /* 할 일 텍스트 */
+      .todo-text {
+        flex: 1;
+        font-size: 0.97rem;
+        line-height: 1.5;
+        word-break: break-all;
+        color: var(--color-text-primary);
+        transition: color var(--transition);
+      }
+
+      /* 날짜 표시 */
+      .todo-date {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        margin-left: 4px;
+      }
+
+      /* 삭제 버튼 */
+      .delete-button {
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 6px;
+        border-radius: var(--radius-sm);
+        line-height: 1;
+        font-size: 1.1rem;
+        transition: color var(--transition), background var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .delete-button:hover {
+        color: var(--color-danger);
+        background: #fee2e2;
+      }
+
+      /* ===========================
+         진행률 바
+         =========================== */
+      .progress-section {
+        margin-bottom: 20px;
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+        padding: 14px 18px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82rem;
+        color: var(--color-text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .progress-label span:last-child {
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .progress-track {
+        background: var(--color-border);
+        border-radius: 99px;
+        height: 8px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+        border-radius: 99px;
+        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 0%;
+      }
+
+      /* ===========================
+         캘린더 — 일정 계획 탭
+         =========================== */
+
+      /* 캘린더 헤더: 연/월 네비게이션 */
+      .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .calendar-nav-button {
+        background: none;
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1rem;
+        color: var(--color-text-secondary);
+        transition: border-color var(--transition), color var(--transition), background var(--transition);
+      }
+
+      .calendar-nav-button:hover {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        background: var(--color-primary-light);
+      }
+
+      .calendar-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        letter-spacing: -0.3px;
+      }
+
+      /* 요일 헤더 행 */
+      .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-bottom: 4px;
+        padding: 0 2px;
+      }
+
+      .calendar-weekday-label {
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 6px 0;
+        color: var(--color-text-muted);
+      }
+
+      /* 일요일 · 토요일 색상 */
+      .calendar-weekday-label:first-child {
+        color: #ef4444;
+      }
+
+      .calendar-weekday-label:last-child {
+        color: #3b82f6;
+      }
+
+      /* 날짜 그리드 */
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        padding: 12px;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 16px;
+      }
+
+      /* 개별 날짜 셀 */
+      .calendar-day {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        position: relative;
+        transition: background var(--transition), color var(--transition);
+        gap: 3px;
+        min-height: 40px;
+      }
+
+      .calendar-day:hover {
+        background: var(--color-primary-light);
+      }
+
+      /* 날짜 숫자 */
+      .calendar-day-number {
+        font-size: 0.88rem;
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      /* 이전/다음 달의 날짜 (흐리게 처리) */
+      .calendar-day.other-month {
+        opacity: 0.3;
+        cursor: default;
+      }
+
+      .calendar-day.other-month:hover {
+        background: none;
+      }
+
+      /* 오늘 날짜 강조 */
+      .calendar-day.today .calendar-day-number {
+        background: var(--color-primary);
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+      }
+
+      /* 선택된 날짜 */
+      .calendar-day.selected {
+        background: var(--color-primary-light);
+        border: 2px solid var(--color-primary);
+      }
+
+      .calendar-day.selected.today .calendar-day-number {
+        background: var(--color-primary);
+        color: #fff;
+      }
+
+      /* 일요일 날짜 빨간색 */
+      .calendar-day.sunday .calendar-day-number {
+        color: #ef4444;
+      }
+
+      .calendar-day.sunday.today .calendar-day-number,
+      .calendar-day.sunday.selected .calendar-day-number {
+        background: #ef4444;
+        color: #fff;
+      }
+
+      /* 토요일 날짜 파란색 */
+      .calendar-day.saturday .calendar-day-number {
+        color: #3b82f6;
+      }
+
+      .calendar-day.saturday.today .calendar-day-number,
+      .calendar-day.saturday.selected .calendar-day-number {
+        background: #3b82f6;
+        color: #fff;
+      }
+
+      /* 일정 있는 날짜의 점(dot) 표시 */
+      .calendar-day-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        flex-shrink: 0;
+      }
+
+      .calendar-day.sunday .calendar-day-dot {
+        background: #ef4444;
+      }
+
+      .calendar-day.saturday .calendar-day-dot {
+        background: #3b82f6;
+      }
+
+      /* ===========================
+         선택된 날짜 일정 패널
+         =========================== */
+      .schedule-panel {
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        animation: slideIn 0.22s ease;
+      }
+
+      /* 패널 헤더 */
+      .schedule-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--color-border);
+        background: var(--color-primary-light);
+      }
+
+      .schedule-panel-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .schedule-panel-count {
+        font-size: 0.8rem;
+        color: var(--color-text-secondary);
+      }
+
+      /* 일정 입력 영역 */
+      .schedule-input-row {
+        display: flex;
+        gap: 8px;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--color-border);
+        flex-wrap: wrap;
+      }
+
+      .schedule-time-input {
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        color: var(--color-text-primary);
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        background: var(--color-bg);
+        font-family: inherit;
+        width: 120px;
+        cursor: pointer;
+      }
+
+      .schedule-time-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        background: var(--color-surface);
+      }
+
+      .schedule-input {
+        flex: 1;
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        color: var(--color-text-primary);
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        background: var(--color-bg);
+        font-family: inherit;
+        min-width: 0;
+      }
+
+      .schedule-input::placeholder {
+        color: var(--color-text-muted);
+      }
+
+      .schedule-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        background: var(--color-surface);
+      }
+
+      .schedule-add-button {
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background var(--transition), transform var(--transition);
+        font-family: inherit;
+      }
+
+      .schedule-add-button:hover {
+        background: var(--color-primary-hover);
+      }
+
+      .schedule-add-button:active {
+        transform: scale(0.96);
+      }
+
+      /* 일정 목록 */
+      .schedule-list {
+        list-style: none;
+        max-height: 280px;
+        overflow-y: auto;
+      }
+
+      /* 스크롤바 스타일링 (Webkit 계열) */
+      .schedule-list::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .schedule-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .schedule-list::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 99px;
+      }
+
+      /* 개별 일정 아이템 */
+      .schedule-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--color-border);
+        transition: background var(--transition);
+        animation: slideIn 0.2s ease;
+      }
+
+      .schedule-item:last-child {
+        border-bottom: none;
+      }
+
+      .schedule-item:hover {
+        background: var(--color-bg);
+      }
+
+      /* 일정 시간 뱃지 */
+      .schedule-time-badge {
+        font-size: 0.72rem;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* 일정 제목 텍스트 */
+      .schedule-title-text {
+        flex: 1;
+        font-size: 0.93rem;
+        line-height: 1.5;
+        word-break: break-all;
+        color: var(--color-text-primary);
+      }
+
+      /* 일정 삭제 버튼 */
+      .schedule-delete-button {
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        line-height: 1;
+        transition: color var(--transition), background var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .schedule-delete-button:hover {
+        color: var(--color-danger);
+        background: #fee2e2;
+      }
+
+      /* 일정 없는 날 안내 */
+      .schedule-empty {
+        text-align: center;
+        padding: 32px 20px;
+        color: var(--color-text-muted);
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+
+      .schedule-empty-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      /* ===========================
+         반응형 레이아웃 (모바일)
+         =========================== */
+      @media (max-width: 480px) {
+        body {
+          padding: 28px 10px 60px;
+        }
+
+        .app-header h1 {
+          font-size: 1.6rem;
+        }
+
+        .input-card {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .todo-time-input {
+          width: 100%;
+        }
+
+        .add-button {
+          width: 100%;
+          padding: 13px;
+        }
+
+        .calendar-grid {
+          padding: 8px;
+          gap: 2px;
+        }
+
+        .calendar-day {
+          min-height: 34px;
+        }
+
+        .calendar-day-number {
+          font-size: 0.8rem;
+        }
+
+        .calendar-day.today .calendar-day-number {
+          width: 24px;
+          height: 24px;
+        }
+
+        .calendar-title {
+          font-size: 0.97rem;
+        }
+
+        .schedule-input-row {
+          flex-direction: column;
+        }
+
+        .schedule-time-input {
+          width: 100%;
+        }
+
+        .schedule-add-button {
+          width: 100%;
+          padding: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- 앱 헤더 -->
+      <header class="app-header">
+        <h1>유미를 위한 할 일 목록</h1>
+        <p>오늘 할 일과 일정을 한눈에 관리해보세요</p>
+      </header>
+
+      <!-- 탭 네비게이션 -->
+      <nav class="tab-nav" role="tablist" aria-label="메뉴 탭">
+        <button
+          class="tab-button active"
+          id="tabTodo"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panelTodo"
+          type="button"
+        >
+          오늘 할 일
+        </button>
+        <button
+          class="tab-button"
+          id="tabSchedule"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panelSchedule"
+          type="button"
+        >
+          일정 계획
+        </button>
+      </nav>
+
+      <!-- ==============================
+           오늘 할 일 탭 패널
+           ============================== -->
+      <div class="tab-panel active" id="panelTodo" role="tabpanel" aria-labelledby="tabTodo">
+
+        <!-- 할 일 입력 폼 -->
+        <div class="input-card">
+          <input
+            type="time"
+            id="todoTimeInput"
+            class="todo-time-input"
+            title="시간 선택 (선택사항)"
+          />
+          <input
+            type="text"
+            id="todoInput"
+            class="todo-input"
+            placeholder="할 일을 입력하고 추가 버튼을 누르세요..."
+            maxlength="100"
+            autocomplete="off"
+          />
+          <button id="addButton" class="add-button" type="button">+ 추가</button>
+        </div>
+
+        <!-- 진행률 표시 영역 -->
+        <div class="progress-section" id="progressSection" style="display: none;">
+          <div class="progress-label">
+            <span>진행률</span>
+            <span id="progressText">0 / 0 완료</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <!-- 요약 통계 바 -->
+        <div class="summary-bar" id="summaryBar" style="display: none;">
+          <span>
+            전체 <span class="count-badge" id="totalCount">0</span>개
+          </span>
+          <button
+            class="clear-done-button"
+            id="clearDoneButton"
+            type="button"
+            disabled
+          >
+            완료 항목 삭제
+          </button>
+        </div>
+
+        <!-- 할 일 목록 렌더링 영역 -->
+        <ul class="todo-list" id="todoList" role="list" aria-label="할 일 목록"></ul>
+      </div>
+
+      <!-- ==============================
+           일정 계획 탭 패널
+           ============================== -->
+      <div class="tab-panel" id="panelSchedule" role="tabpanel" aria-labelledby="tabSchedule">
+
+        <!-- 캘린더 월 네비게이션 헤더 -->
+        <div class="calendar-header">
+          <button
+            class="calendar-nav-button"
+            id="calPrevButton"
+            type="button"
+            aria-label="이전 달"
+          >&#8249;</button>
+          <span class="calendar-title" id="calTitle"></span>
+          <button
+            class="calendar-nav-button"
+            id="calNextButton"
+            type="button"
+            aria-label="다음 달"
+          >&#8250;</button>
+        </div>
+
+        <!-- 요일 헤더 -->
+        <div class="calendar-weekdays" aria-hidden="true">
+          <div class="calendar-weekday-label">일</div>
+          <div class="calendar-weekday-label">월</div>
+          <div class="calendar-weekday-label">화</div>
+          <div class="calendar-weekday-label">수</div>
+          <div class="calendar-weekday-label">목</div>
+          <div class="calendar-weekday-label">금</div>
+          <div class="calendar-weekday-label">토</div>
+        </div>
+
+        <!-- 날짜 그리드 (JS로 채워짐) -->
+        <div class="calendar-grid" id="calendarGrid" role="grid" aria-label="날짜 선택"></div>
+
+        <!-- 선택된 날짜의 일정 패널 (초기에는 미선택 상태) -->
+        <div id="schedulePanel" style="display: none;"></div>
+      </div>
+    </div>
+
+    <script>
+      // =========================================
+      // 상수 및 전역 설정
+      // =========================================
+
+      /** localStorage 키: 오늘 할 일 */
+      const TODO_STORAGE_KEY = 'todo-app-items';
+
+      /** localStorage 키: 일정 계획 (기존 TODO와 분리) */
+      const SCHEDULE_STORAGE_KEY = 'schedule-app-events';
+
+      /** 할 일 완료 여부 상태 값 */
+      const STATUS = {
+        ACTIVE: 'active',
+        DONE: 'done',
+      };
+
+      /** 요일 이름 (캘린더 접근성용) */
+      const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
+
+      // =========================================
+      // 공통 상태 (State)
+      // =========================================
+
+      /** 전체 할 일 항목 배열 */
+      let todoItems = [];
+
+      /**
+       * 일정 데이터 구조: { 'YYYY-MM-DD': [{ id, title, createdAt }, ...] }
+       * 날짜를 키로 사용하여 O(1) 조회를 보장합니다.
+       */
+      let scheduleData = {};
+
+      /** 현재 캘린더가 표시 중인 연도 */
+      let calendarYear = new Date().getFullYear();
+
+      /** 현재 캘린더가 표시 중인 월 (0-indexed) */
+      let calendarMonth = new Date().getMonth();
+
+      /** 현재 선택된 날짜 키 ('YYYY-MM-DD' 형식, null이면 미선택) */
+      let selectedDateKey = null;
+
+      // =========================================
+      // TODO 스토리지 레이어
+      // =========================================
+
+      /**
+       * localStorage에서 할 일 목록을 불러옵니다.
+       * @returns {Array}
+       */
+      function loadTodosFromStorage() {
+        try {
+          const raw = localStorage.getItem(TODO_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      /**
+       * 현재 할 일 상태를 localStorage에 저장합니다.
+       */
+      function saveTodosToStorage() {
+        try {
+          localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todoItems));
+        } catch {
+          console.warn('할 일 저장에 실패했습니다.');
+        }
+      }
+
+      // =========================================
+      // 일정 스토리지 레이어
+      // =========================================
+
+      /**
+       * localStorage에서 일정 데이터를 불러옵니다.
+       * @returns {Object} 날짜 키 기반 일정 객체
+       */
+      function loadScheduleFromStorage() {
+        try {
+          const raw = localStorage.getItem(SCHEDULE_STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      }
+
+      /**
+       * 현재 일정 상태를 localStorage에 저장합니다.
+       */
+      function saveScheduleToStorage() {
+        try {
+          localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(scheduleData));
+        } catch {
+          console.warn('일정 저장에 실패했습니다.');
+        }
+      }
+
+      // =========================================
+      // 날짜 유틸리티
+      // =========================================
+
+      /**
+       * 연도, 월, 일을 받아 'YYYY-MM-DD' 형식의 키를 반환합니다.
+       * @param {number} year
+       * @param {number} month - 0-indexed
+       * @param {number} day
+       * @returns {string}
+       */
+      function buildDateKey(year, month, day) {
+        const mm = String(month + 1).padStart(2, '0');
+        const dd = String(day).padStart(2, '0');
+        return `${year}-${mm}-${dd}`;
+      }
+
+      /**
+       * 'YYYY-MM-DD' 키를 한국어 날짜 표기 문자열로 변환합니다.
+       * @param {string} dateKey
+       * @returns {string} 예: '2025년 3월 5일 (화)'
+       */
+      function formatDateKeyToKorean(dateKey) {
+        const [year, month, day] = dateKey.split('-').map(Number);
+        // month는 1-indexed이므로 -1 처리
+        const date = new Date(year, month - 1, day);
+        const weekday = WEEKDAY_NAMES[date.getDay()];
+        return `${year}년 ${month}월 ${day}일 (${weekday})`;
+      }
+
+      /**
+       * 오늘 날짜의 'YYYY-MM-DD' 키를 반환합니다.
+       * @returns {string}
+       */
+      function getTodayKey() {
+        const today = new Date();
+        return buildDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+      }
+
+      // =========================================
+      // TODO 도메인 헬퍼
+      // =========================================
+
+      /**
+       * 새 할 일 항목 객체를 생성합니다.
+       * @param {string} text
+       * @returns {Object}
+       */
+      function createTodoItem(text, time) {
+        return {
+          id: Date.now().toString(),
+          text: text.trim(),
+          time: time || '',
+          status: STATUS.ACTIVE,
+          createdAt: new Date().toISOString(),
+        };
+      }
+
+      /**
+       * 할 일 항목의 완료 상태를 토글합니다.
+       * @param {string} id
+       */
+      function toggleTodoStatus(id) {
+        todoItems = todoItems.map((item) =>
+          item.id === id
+            ? { ...item, status: item.status === STATUS.DONE ? STATUS.ACTIVE : STATUS.DONE }
+            : item
+        );
+      }
+
+      /**
+       * 특정 할 일 항목을 삭제합니다.
+       * @param {string} id
+       */
+      function deleteTodoItem(id) {
+        todoItems = todoItems.filter((item) => item.id !== id);
+      }
+
+      /**
+       * 완료된 모든 할 일 항목을 일괄 삭제합니다.
+       */
+      function clearCompletedItems() {
+        todoItems = todoItems.filter((item) => item.status !== STATUS.DONE);
+      }
+
+      // =========================================
+      // 일정 도메인 헬퍼
+      // =========================================
+
+      /**
+       * 특정 날짜에 새 일정을 추가합니다.
+       * @param {string} dateKey - 'YYYY-MM-DD'
+       * @param {string} title - 일정 제목
+       * @param {string} time - 'HH:MM' 형식의 시간 (선택사항)
+       */
+      function addScheduleEvent(dateKey, title, time) {
+        if (!scheduleData[dateKey]) {
+          scheduleData[dateKey] = [];
+        }
+        scheduleData[dateKey].push({
+          id: Date.now().toString(),
+          title: title.trim(),
+          time: time || '',
+          createdAt: new Date().toISOString(),
+        });
+        // 시간순 정렬 (시간 미지정은 맨 뒤)
+        scheduleData[dateKey].sort((a, b) => {
+          if (!a.time && !b.time) return 0;
+          if (!a.time) return 1;
+          if (!b.time) return -1;
+          return a.time.localeCompare(b.time);
+        });
+      }
+
+      /**
+       * 특정 날짜의 특정 일정을 삭제합니다.
+       * @param {string} dateKey
+       * @param {string} eventId
+       */
+      function deleteScheduleEvent(dateKey, eventId) {
+        if (!scheduleData[dateKey]) return;
+        scheduleData[dateKey] = scheduleData[dateKey].filter((e) => e.id !== eventId);
+        // 해당 날짜에 일정이 없어지면 키 자체를 삭제하여 저장 공간 절약
+        if (scheduleData[dateKey].length === 0) {
+          delete scheduleData[dateKey];
+        }
+      }
+
+      /**
+       * 특정 날짜에 일정이 있는지 확인합니다.
+       * @param {string} dateKey
+       * @returns {boolean}
+       */
+      function hasScheduleEvents(dateKey) {
+        return !!(scheduleData[dateKey] && scheduleData[dateKey].length > 0);
+      }
+
+      /**
+       * 특정 날짜의 일정 개수를 반환합니다.
+       * @param {string} dateKey
+       * @returns {number}
+       */
+      function getEventCount(dateKey) {
+        return scheduleData[dateKey] ? scheduleData[dateKey].length : 0;
+      }
+
+      // =========================================
+      // TODO 뷰 렌더링
+      // =========================================
+
+      /**
+       * 날짜 문자열을 '오늘', '어제', 또는 'MM/DD' 형태로 포맷합니다.
+       * @param {string} isoString
+       * @returns {string}
+       */
+      function formatDate(isoString) {
+        const created = new Date(isoString);
+        const today = new Date();
+        const diffMs = today.setHours(0, 0, 0, 0) - created.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return '오늘';
+        if (diffDays === 1) return '어제';
+        const m = created.getMonth() + 1;
+        const d = created.getDate();
+        return `${m}/${d}`;
+      }
+
+      /**
+       * 개별 할 일 항목의 li 엘리먼트를 생성합니다.
+       * @param {Object} item
+       * @returns {HTMLLIElement}
+       */
+      function createTodoElement(item) {
+        const li = document.createElement('li');
+        li.className = 'todo-item' + (item.status === STATUS.DONE ? ' completed' : '');
+        li.dataset.id = item.id;
+        li.setAttribute('role', 'listitem');
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'todo-checkbox';
+        checkbox.checked = item.status === STATUS.DONE;
+        checkbox.setAttribute('aria-label', `완료 여부: ${item.text}`);
+        checkbox.addEventListener('change', () => handleToggle(item.id));
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'todo-text';
+        textSpan.textContent = item.text;
+
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'todo-date';
+        const timeLabel = item.time ? item.time + ' · ' : '';
+        dateSpan.textContent = timeLabel + formatDate(item.createdAt);
+        dateSpan.setAttribute('aria-label', `${item.time ? '시간: ' + item.time + ', ' : ''}추가 날짜: ${formatDate(item.createdAt)}`);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-button';
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = '✕';
+        deleteBtn.setAttribute('aria-label', `삭제: ${item.text}`);
+        deleteBtn.addEventListener('click', () => handleDelete(item.id));
+
+        li.appendChild(checkbox);
+        li.appendChild(textSpan);
+        li.appendChild(dateSpan);
+        li.appendChild(deleteBtn);
+
+        return li;
+      }
+
+      /**
+       * 빈 상태 안내 엘리먼트를 생성합니다.
+       * @returns {HTMLDivElement}
+       */
+      function createEmptyStateElement() {
+        const div = document.createElement('div');
+        div.className = 'empty-state';
+        div.setAttribute('role', 'status');
+        div.setAttribute('aria-live', 'polite');
+        div.innerHTML = `
+          <div class="empty-icon">📋</div>
+          <p>아직 할 일이 없습니다.<br/><strong>위 입력창</strong>에 할 일을 작성하고 추가해보세요!</p>
+        `;
+        return div;
+      }
+
+      /**
+       * 진행률 바와 요약 통계를 갱신합니다.
+       */
+      function updateSummary() {
+        const total = todoItems.length;
+        const doneCount = todoItems.filter((item) => item.status === STATUS.DONE).length;
+        const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+
+        const progressSection = document.getElementById('progressSection');
+        const summaryBar = document.getElementById('summaryBar');
+        const totalCountEl = document.getElementById('totalCount');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const clearDoneBtn = document.getElementById('clearDoneButton');
+
+        if (total === 0) {
+          progressSection.style.display = 'none';
+          summaryBar.style.display = 'none';
+          return;
+        }
+
+        progressSection.style.display = 'block';
+        summaryBar.style.display = 'flex';
+
+        totalCountEl.textContent = total;
+        progressFill.style.width = percent + '%';
+        progressText.textContent = `${doneCount} / ${total} 완료 (${percent}%)`;
+        clearDoneBtn.disabled = doneCount === 0;
+      }
+
+      /**
+       * 전체 할 일 목록을 DOM에 렌더링합니다.
+       */
+      function renderTodoList() {
+        const listEl = document.getElementById('todoList');
+        listEl.innerHTML = '';
+
+        if (todoItems.length === 0) {
+          listEl.appendChild(createEmptyStateElement());
+        } else {
+          todoItems.forEach((item) => {
+            listEl.appendChild(createTodoElement(item));
+          });
+        }
+
+        updateSummary();
+      }
+
+      // =========================================
+      // 캘린더 뷰 렌더링
+      // =========================================
+
+      /**
+       * 캘린더 제목(연월)과 날짜 그리드를 렌더링합니다.
+       * 선택된 날짜가 현재 월에 속하지 않으면 선택 해제합니다.
+       */
+      function renderCalendar() {
+        // 캘린더 제목 업데이트
+        const titleEl = document.getElementById('calTitle');
+        titleEl.textContent = `${calendarYear}년 ${calendarMonth + 1}월`;
+
+        const gridEl = document.getElementById('calendarGrid');
+        gridEl.innerHTML = '';
+
+        const todayKey = getTodayKey();
+
+        // 이번 달 1일의 요일 (0=일, 6=토)
+        const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
+        // 이번 달 마지막 날
+        const lastDateOfMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+        // 이전 달 마지막 날
+        const lastDateOfPrevMonth = new Date(calendarYear, calendarMonth, 0).getDate();
+
+        // 그리드를 채울 총 셀 수: 6주 x 7일 = 42 (항상 일정한 높이 유지)
+        const TOTAL_CELLS = 42;
+
+        for (let i = 0; i < TOTAL_CELLS; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'calendar-day';
+          cell.setAttribute('role', 'gridcell');
+
+          let dayNumber;
+          let isCurrentMonth = true;
+          let cellYear = calendarYear;
+          let cellMonth = calendarMonth;
+
+          if (i < firstDayOfMonth) {
+            // 이전 달 날짜 채우기
+            dayNumber = lastDateOfPrevMonth - firstDayOfMonth + 1 + i;
+            isCurrentMonth = false;
+            cellMonth = calendarMonth - 1;
+            if (cellMonth < 0) { cellMonth = 11; cellYear -= 1; }
+          } else if (i >= firstDayOfMonth + lastDateOfMonth) {
+            // 다음 달 날짜 채우기
+            dayNumber = i - firstDayOfMonth - lastDateOfMonth + 1;
+            isCurrentMonth = false;
+            cellMonth = calendarMonth + 1;
+            if (cellMonth > 11) { cellMonth = 0; cellYear += 1; }
+          } else {
+            // 현재 달 날짜
+            dayNumber = i - firstDayOfMonth + 1;
+          }
+
+          const cellDateKey = buildDateKey(cellYear, cellMonth, dayNumber);
+          const weekdayIndex = i % 7; // 0=일, 6=토
+
+          // 이전/다음 달 날짜는 흐리게 표시하고 클릭 비활성화
+          if (!isCurrentMonth) {
+            cell.classList.add('other-month');
+            cell.setAttribute('aria-hidden', 'true');
+          } else {
+            // 오늘 날짜 강조
+            if (cellDateKey === todayKey) {
+              cell.classList.add('today');
+            }
+            // 선택된 날짜 강조
+            if (cellDateKey === selectedDateKey) {
+              cell.classList.add('selected');
+            }
+            // 일요일 / 토요일 색상
+            if (weekdayIndex === 0) cell.classList.add('sunday');
+            if (weekdayIndex === 6) cell.classList.add('saturday');
+
+            cell.setAttribute('tabindex', '0');
+            cell.setAttribute('aria-label', `${calendarYear}년 ${calendarMonth + 1}월 ${dayNumber}일`);
+            cell.addEventListener('click', () => handleDateSelect(cellDateKey));
+            cell.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleDateSelect(cellDateKey);
+              }
+            });
+          }
+
+          // 날짜 숫자 엘리먼트
+          const numberEl = document.createElement('span');
+          numberEl.className = 'calendar-day-number';
+          numberEl.textContent = dayNumber;
+          cell.appendChild(numberEl);
+
+          // 일정 있는 날짜에 점(dot) 표시
+          if (isCurrentMonth && hasScheduleEvents(cellDateKey)) {
+            const dot = document.createElement('span');
+            dot.className = 'calendar-day-dot';
+            dot.setAttribute('aria-hidden', 'true');
+            cell.appendChild(dot);
+          }
+
+          gridEl.appendChild(cell);
+        }
+      }
+
+      /**
+       * 선택된 날짜의 일정 패널을 렌더링합니다.
+       * selectedDateKey가 null이면 패널을 숨깁니다.
+       */
+      function renderSchedulePanel() {
+        const panelEl = document.getElementById('schedulePanel');
+
+        if (!selectedDateKey) {
+          panelEl.style.display = 'none';
+          panelEl.innerHTML = '';
+          return;
+        }
+
+        panelEl.style.display = 'block';
+
+        const events = scheduleData[selectedDateKey] || [];
+        const koreanDate = formatDateKeyToKorean(selectedDateKey);
+
+        // 패널 전체를 새로 그립니다 (단순 재렌더링 방식 유지)
+        panelEl.innerHTML = '';
+
+        const panel = document.createElement('div');
+        panel.className = 'schedule-panel';
+
+        // --- 패널 헤더 ---
+        const header = document.createElement('div');
+        header.className = 'schedule-panel-header';
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'schedule-panel-title';
+        titleEl.textContent = koreanDate;
+
+        const countEl = document.createElement('span');
+        countEl.className = 'schedule-panel-count';
+        countEl.textContent = `일정 ${events.length}개`;
+
+        header.appendChild(titleEl);
+        header.appendChild(countEl);
+        panel.appendChild(header);
+
+        // --- 일정 입력 행 ---
+        const inputRow = document.createElement('div');
+        inputRow.className = 'schedule-input-row';
+
+        const timeInput = document.createElement('input');
+        timeInput.type = 'time';
+        timeInput.className = 'schedule-time-input';
+        timeInput.id = 'scheduleTimeInput';
+        timeInput.title = '시간 선택 (선택사항)';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'schedule-input';
+        input.placeholder = '새 일정을 입력하세요...';
+        input.maxLength = 100;
+        input.autocomplete = 'off';
+        input.id = 'scheduleInput';
+
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'schedule-add-button';
+        addBtn.textContent = '+ 추가';
+        addBtn.addEventListener('click', () => handleScheduleAdd(selectedDateKey));
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') handleScheduleAdd(selectedDateKey);
+        });
+
+        inputRow.appendChild(timeInput);
+        inputRow.appendChild(input);
+        inputRow.appendChild(addBtn);
+        panel.appendChild(inputRow);
+
+        // --- 일정 목록 ---
+        const listEl = document.createElement('ul');
+        listEl.className = 'schedule-list';
+        listEl.setAttribute('role', 'list');
+        listEl.setAttribute('aria-label', `${koreanDate} 일정 목록`);
+
+        if (events.length === 0) {
+          // 빈 상태 안내
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'schedule-empty';
+          emptyDiv.innerHTML = `
+            <div class="schedule-empty-icon">📅</div>
+            <div>이 날의 일정이 없습니다.<br/>위 입력창에 일정을 추가해보세요.</div>
+          `;
+          listEl.appendChild(emptyDiv);
+        } else {
+          events.forEach((event) => {
+            const li = document.createElement('li');
+            li.className = 'schedule-item';
+            li.setAttribute('role', 'listitem');
+
+            // 시간 뱃지 (사용자가 선택한 시간 또는 '종일')
+            const timeBadge = document.createElement('span');
+            timeBadge.className = 'schedule-time-badge';
+            timeBadge.textContent = event.time ? event.time : '종일';
+
+            const titleText = document.createElement('span');
+            titleText.className = 'schedule-title-text';
+            titleText.textContent = event.title;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'schedule-delete-button';
+            deleteBtn.textContent = '✕';
+            deleteBtn.setAttribute('aria-label', `일정 삭제: ${event.title}`);
+            deleteBtn.addEventListener('click', () => handleScheduleDelete(selectedDateKey, event.id));
+
+            li.appendChild(timeBadge);
+            li.appendChild(titleText);
+            li.appendChild(deleteBtn);
+            listEl.appendChild(li);
+          });
+        }
+
+        panel.appendChild(listEl);
+        panelEl.appendChild(panel);
+
+        // 패널이 새로 그려진 후 입력창에 포커스
+        requestAnimationFrame(() => {
+          const inputEl = document.getElementById('scheduleInput');
+          if (inputEl) inputEl.focus();
+        });
+      }
+
+      // =========================================
+      // TODO 이벤트 핸들러
+      // =========================================
+
+      /**
+       * 할 일 추가 처리
+       */
+      function handleAdd() {
+        const input = document.getElementById('todoInput');
+        const timeInput = document.getElementById('todoTimeInput');
+        const text = input.value.trim();
+
+        if (!text) {
+          input.focus();
+          input.classList.add('input-error-shake');
+          setTimeout(() => input.classList.remove('input-error-shake'), 400);
+          return;
+        }
+
+        const isDuplicate = todoItems.some(
+          (item) => item.status === STATUS.ACTIVE && item.text === text
+        );
+        if (isDuplicate) {
+          console.info('동일한 내용의 미완료 항목이 이미 존재합니다.');
+        }
+
+        const time = timeInput ? timeInput.value : '';
+        const newItem = createTodoItem(text, time);
+        todoItems = [newItem, ...todoItems];
+
+        saveTodosToStorage();
+        renderTodoList();
+
+        input.value = '';
+        timeInput.value = '';
+        input.focus();
+      }
+
+      /**
+       * 할 일 완료 상태 토글 처리
+       * @param {string} id
+       */
+      function handleToggle(id) {
+        toggleTodoStatus(id);
+        saveTodosToStorage();
+        renderTodoList();
+      }
+
+      /**
+       * 할 일 항목 삭제 처리
+       * @param {string} id
+       */
+      function handleDelete(id) {
+        deleteTodoItem(id);
+        saveTodosToStorage();
+        renderTodoList();
+      }
+
+      /**
+       * 완료된 항목 일괄 삭제 처리
+       */
+      function handleClearDone() {
+        const doneCount = todoItems.filter((item) => item.status === STATUS.DONE).length;
+        if (doneCount === 0) return;
+
+        if (!confirm(`완료된 항목 ${doneCount}개를 삭제하시겠습니까?`)) return;
+
+        clearCompletedItems();
+        saveTodosToStorage();
+        renderTodoList();
+      }
+
+      // =========================================
+      // 캘린더 이벤트 핸들러
+      // =========================================
+
+      /**
+       * 이전 달로 이동합니다.
+       */
+      function handlePrevMonth() {
+        calendarMonth -= 1;
+        if (calendarMonth < 0) {
+          calendarMonth = 11;
+          calendarYear -= 1;
+        }
+        // 월이 바뀌면 선택 상태 초기화
+        selectedDateKey = null;
+        renderCalendar();
+        renderSchedulePanel();
+      }
+
+      /**
+       * 다음 달로 이동합니다.
+       */
+      function handleNextMonth() {
+        calendarMonth += 1;
+        if (calendarMonth > 11) {
+          calendarMonth = 0;
+          calendarYear += 1;
+        }
+        selectedDateKey = null;
+        renderCalendar();
+        renderSchedulePanel();
+      }
+
+      /**
+       * 날짜 셀 클릭: 해당 날짜를 선택하거나 같은 날짜면 선택 해제합니다.
+       * @param {string} dateKey - 'YYYY-MM-DD'
+       */
+      function handleDateSelect(dateKey) {
+        // 같은 날짜를 다시 클릭하면 패널 닫기 (토글)
+        if (selectedDateKey === dateKey) {
+          selectedDateKey = null;
+        } else {
+          selectedDateKey = dateKey;
+        }
+        // 캘린더 재렌더링으로 선택 상태 반영
+        renderCalendar();
+        renderSchedulePanel();
+      }
+
+      /**
+       * 일정 추가 처리
+       * @param {string} dateKey
+       */
+      function handleScheduleAdd(dateKey) {
+        const input = document.getElementById('scheduleInput');
+        const timeInput = document.getElementById('scheduleTimeInput');
+        if (!input) return;
+        const title = input.value.trim();
+
+        if (!title) {
+          input.focus();
+          input.classList.add('input-error-shake');
+          setTimeout(() => input.classList.remove('input-error-shake'), 400);
+          return;
+        }
+
+        const time = timeInput ? timeInput.value : '';
+        addScheduleEvent(dateKey, title, time);
+        saveScheduleToStorage();
+
+        // 캘린더 dot 표시와 패널 목록을 함께 갱신
+        renderCalendar();
+        renderSchedulePanel();
+      }
+
+      /**
+       * 일정 삭제 처리
+       * @param {string} dateKey
+       * @param {string} eventId
+       */
+      function handleScheduleDelete(dateKey, eventId) {
+        deleteScheduleEvent(dateKey, eventId);
+        saveScheduleToStorage();
+        renderCalendar();
+        renderSchedulePanel();
+      }
+
+      // =========================================
+      // 탭 전환
+      // =========================================
+
+      /**
+       * 탭을 전환합니다.
+       * @param {'todo' | 'schedule'} tabName
+       */
+      function switchTab(tabName) {
+        const tabTodo = document.getElementById('tabTodo');
+        const tabSchedule = document.getElementById('tabSchedule');
+        const panelTodo = document.getElementById('panelTodo');
+        const panelSchedule = document.getElementById('panelSchedule');
+
+        if (tabName === 'todo') {
+          tabTodo.classList.add('active');
+          tabTodo.setAttribute('aria-selected', 'true');
+          tabSchedule.classList.remove('active');
+          tabSchedule.setAttribute('aria-selected', 'false');
+
+          panelTodo.classList.add('active');
+          panelSchedule.classList.remove('active');
+        } else {
+          tabSchedule.classList.add('active');
+          tabSchedule.setAttribute('aria-selected', 'true');
+          tabTodo.classList.remove('active');
+          tabTodo.setAttribute('aria-selected', 'false');
+
+          panelSchedule.classList.add('active');
+          panelTodo.classList.remove('active');
+
+          // 일정 탭으로 전환 시 캘린더 렌더링 (초기 1회)
+          renderCalendar();
+          renderSchedulePanel();
+        }
+      }
+
+      // =========================================
+      // 앱 초기화
+      // =========================================
+
+      /**
+       * 앱 전체를 초기화합니다.
+       * 이벤트 리스너를 등록하고 저장된 데이터를 로드한 뒤 초기 렌더링을 수행합니다.
+       */
+      function initApp() {
+        // --- TODO 탭 이벤트 바인딩 ---
+        document.getElementById('addButton').addEventListener('click', handleAdd);
+        document.getElementById('todoInput').addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') handleAdd();
+        });
+        document.getElementById('clearDoneButton').addEventListener('click', handleClearDone);
+
+        // --- 탭 전환 이벤트 바인딩 ---
+        document.getElementById('tabTodo').addEventListener('click', () => switchTab('todo'));
+        document.getElementById('tabSchedule').addEventListener('click', () => switchTab('schedule'));
+
+        // --- 캘린더 네비게이션 이벤트 바인딩 ---
+        document.getElementById('calPrevButton').addEventListener('click', handlePrevMonth);
+        document.getElementById('calNextButton').addEventListener('click', handleNextMonth);
+
+        // --- 저장된 데이터 로드 ---
+        todoItems = loadTodosFromStorage();
+        scheduleData = loadScheduleFromStorage();
+
+        // --- 초기 렌더링 ---
+        renderTodoList();
+      }
+
+      // DOM이 완전히 로드된 후 앱 초기화 실행
+      document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+
+    <!-- 입력창 흔들림 애니메이션 (빈 입력 방어 시 시각적 피드백) -->
+    <style>
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%       { transform: translateX(-6px); }
+        40%       { transform: translateX(6px); }
+        60%       { transform: translateX(-4px); }
+        80%       { transform: translateX(4px); }
+      }
+
+      .input-error-shake {
+        animation: shake 0.35s ease;
+        border-color: var(--color-danger) !important;
+      }
+    </style>
+  </body>
+</html>
