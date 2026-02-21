@@ -359,6 +359,16 @@
         background: #fde8e8;
       }
 
+      .btn--warning {
+        background: none;
+        color: #a07800;
+        border: 2px solid var(--color-warning);
+      }
+
+      .btn--warning:hover {
+        background: #fffbee;
+      }
+
       /* 고스트(ghost) 버튼 — 텍스트만 */
       .btn--ghost {
         background: none;
@@ -602,7 +612,8 @@
         border-radius: var(--radius-md);
         border: 1.5px solid var(--color-border);
         box-shadow: var(--shadow-sm);
-        overflow: hidden;
+        position: relative;
+        z-index: 100;
       }
 
       /* 왼쪽 탭 영역 */
@@ -666,6 +677,124 @@
         padding: 10px 16px;
         border-left: 1.5px solid var(--color-border);
         flex-shrink: 0;
+      }
+
+      /* 드롭다운 화살표 버튼 */
+      .navbar-dropdown-wrap {
+        position: relative;
+      }
+
+      .btn-dropdown-arrow {
+        background: var(--color-primary-light);
+        border: 1.5px solid var(--color-border);
+        border-radius: 8px;
+        padding: 3px 8px;
+        font-size: 0.65rem;
+        color: var(--color-primary);
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s ease;
+      }
+
+      .btn-dropdown-arrow:hover {
+        background: var(--color-primary);
+        color: #fff;
+      }
+
+      .btn-dropdown-arrow.open {
+        background: var(--color-primary);
+        color: #fff;
+      }
+
+      /* 드롭다운 메뉴 */
+      .navbar-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        background: #fff;
+        border: 1.5px solid var(--color-border);
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        min-width: 160px;
+        z-index: 99999;
+        overflow: hidden;
+      }
+
+      .navbar-dropdown.open {
+        display: block;
+      }
+
+      .navbar-dropdown .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 10px 16px;
+        background: none;
+        border: none;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        transition: background 0.12s ease;
+      }
+
+      .navbar-dropdown .dropdown-item:hover {
+        background: var(--color-primary-light);
+      }
+
+      .navbar-dropdown .dropdown-item + .dropdown-item {
+        border-top: 1px solid var(--color-border);
+      }
+
+      /* 사용자 정보 패널 */
+      .profile-panel {
+        background: #fff;
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        margin: 0 0 16px;
+        overflow: hidden;
+      }
+
+      .profile-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: var(--color-primary-light);
+        border-bottom: 1.5px solid var(--color-border);
+      }
+
+      .profile-panel-header h3 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin: 0;
+      }
+
+      .btn-profile-close {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: all 0.12s ease;
+      }
+
+      .btn-profile-close:hover {
+        background: var(--color-danger);
+        color: #fff;
+      }
+
+      .profile-panel-body {
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
       }
 
       .user-navbar-user .navbar-username {
@@ -1138,6 +1267,32 @@
       .diary-review-row .review-daily-input::placeholder {
         color: #d4c6e8;
         font-size: 0.82rem;
+      }
+
+      /* 한줄평 등록 버튼 */
+      .btn-review-submit {
+        background: var(--color-primary);
+        border: none;
+        border-radius: 10px;
+        padding: 7px 16px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .btn-review-submit:hover {
+        background: var(--color-primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(180, 141, 232, 0.3);
+      }
+
+      .btn-review-submit:active {
+        transform: translateY(0);
       }
 
       /* 코멘트 버튼 */
@@ -2134,8 +2289,9 @@
             <button role="tab" id="tabNotice" class="active" aria-selected="true" aria-controls="tabContentNotice">📢 공지사항</button>
             <button role="tab" id="tabReview" aria-selected="false" aria-controls="tabContentReview">📅 일정</button>
           </div>
-          <!-- 오른쪽: 이름 + 로그아웃 아이콘 -->
+          <!-- 오른쪽: 비밀번호변경 + 이름 + 로그아웃 아이콘 -->
           <div class="user-navbar-user">
+            <button class="btn-change-pw" id="btnChangePw" type="button">🔒 비밀번호 변경</button>
             <span class="navbar-username" id="navbarUserName">홍길동</span>
             <button class="btn--logout-icon" id="btnUserLogout" type="button" title="로그아웃" aria-label="로그아웃">
               <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -2265,6 +2421,36 @@
             <button class="btn btn--primary btn--full" id="btnAdminLogin" type="button">
               로그인
             </button>
+
+            <div style="text-align:center; margin-top:12px;">
+              <button class="btn btn--ghost" id="btnAdminForgotPw" type="button" style="font-size:0.8rem; color:var(--color-text-secondary);">
+                비밀번호를 잊으셨나요?
+              </button>
+            </div>
+
+            <!-- 비밀번호 초기화 폼 (기본 숨김) -->
+            <div id="adminResetPwForm" style="display:none; margin-top:16px; padding-top:16px; border-top:1.5px solid var(--color-border);">
+              <p style="font-size:0.82rem; font-weight:700; color:var(--color-primary); margin-bottom:12px;">관리자 정보를 입력하여 본인 확인</p>
+              <div class="alert alert--error" id="adminResetAlert" style="display:none;" role="alert">
+                <span class="alert-icon">⚠️</span>
+                <span id="adminResetAlertMsg"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">이름</label>
+                <input type="text" class="form-input" id="resetAdminName" placeholder="관리자 이름" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">생년월일</label>
+                <input type="date" class="form-input" id="resetAdminBirth" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">전화번호</label>
+                <input type="tel" class="form-input" id="resetAdminPhone" placeholder="010-0000-0000" />
+              </div>
+              <button class="btn btn--primary btn--full" id="btnAdminResetPw" type="button">
+                비밀번호 초기화
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -2283,11 +2469,41 @@
           </div>
           <div class="user-navbar-user">
             <span class="navbar-username">관리자</span>
+            <div class="navbar-dropdown-wrap">
+              <button class="btn-dropdown-arrow" id="btnAdminDropdown" type="button" title="메뉴">▼</button>
+              <div class="navbar-dropdown" id="adminDropdownMenu">
+                <button class="dropdown-item" id="btnAdminDropdownProfile" type="button">👤 관리자 정보</button>
+                <button class="dropdown-item" id="btnAdminDropdownChangePw" type="button">🔒 비밀번호 변경</button>
+              </div>
+            </div>
             <button class="btn--logout-icon" id="btnAdminLogout" type="button" title="로그아웃" aria-label="로그아웃">
               <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
           </div>
         </nav>
+
+        <!-- 관리자 정보 패널 (기본 숨김) -->
+        <div class="profile-panel" id="adminProfilePanel" style="display:none;">
+          <div class="profile-panel-header">
+            <h3>👤 관리자 정보</h3>
+            <button class="btn-profile-close" id="btnCloseAdminProfile" type="button">✕</button>
+          </div>
+          <div class="profile-panel-body">
+            <div class="form-group">
+              <label class="form-label">이름</label>
+              <input type="text" class="form-input" id="adminProfileName" placeholder="이름" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">생년월일</label>
+              <input type="date" class="form-input" id="adminProfileBirth" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">전화번호</label>
+              <input type="tel" class="form-input" id="adminProfilePhone" placeholder="010-0000-0000" />
+            </div>
+            <button class="btn btn--primary btn--full" id="btnSaveAdminProfile" type="button">저장</button>
+          </div>
+        </div>
 
         <!-- 탭 콘텐츠: 사용자 목록 -->
         <div class="user-tab-content active" id="adminTabContentUsers" role="tabpanel" aria-labelledby="adminTabUsers">
@@ -2369,23 +2585,39 @@
 
         <!-- 탭 콘텐츠: 한줄평 관리 -->
         <div class="user-tab-content" id="adminTabContentReview" role="tabpanel" aria-labelledby="adminTabReview">
-          <div class="card">
-            <div class="card-header">
-              <h2>📝 한줄평 관리</h2>
-              <p>날짜를 선택하여 해당 날에 작성된 모든 학생의 한줄평을 확인하고 평가를 남길 수 있습니다.</p>
-            </div>
-            <div class="card-body" style="padding: 20px 24px;">
-              <div class="date-filter-row">
-                <input
-                  type="date"
-                  id="adminReviewDateFilter"
-                  class="form-input"
-                  aria-label="조회할 날짜 선택"
-                />
-                <button class="btn btn--secondary btn--sm" id="btnFilterReviews" type="button">
-                  조회
-                </button>
+          <div class="diary-layout">
+            <!-- 상단: 월/연도 헤더 -->
+            <div class="diary-header">
+              <div class="header-left">
+                <button class="diary-nav-btn" id="btnAdminReviewMonthPrev" type="button" title="이전 달">◀</button>
+                <span class="month-num" id="adminReviewMonthNum"></span>
+                <div class="month-detail">
+                  <span class="month-eng" id="adminReviewMonthEng"></span>
+                  <span class="month-year" id="adminReviewMonthYear"></span>
+                </div>
+                <button class="diary-nav-btn" id="btnAdminReviewMonthNext" type="button" title="다음 달">▶</button>
               </div>
+              <button class="btn-today" id="btnAdminReviewToday" type="button">오늘</button>
+            </div>
+
+            <!-- 가로 날짜 스트립 -->
+            <div class="diary-date-strip-wrap">
+              <div class="diary-date-strip" id="adminReviewDateStrip"></div>
+            </div>
+
+            <!-- 선택된 날짜 정보 -->
+            <div class="diary-date-info" id="adminReviewDateInfo">
+              <span class="info-day-num" id="adminReviewInfoDay"></span>
+              <div class="info-right">
+                <span class="info-dow" id="adminReviewInfoDow"></span>
+                <span class="info-lunar" id="adminReviewInfoLunar"></span>
+              </div>
+            </div>
+
+            <!-- 숨겨진 날짜 필터 (기존 로직 호환용) -->
+            <input type="hidden" id="adminReviewDateFilter" />
+
+            <div style="padding: 0 22px 20px;">
               <div class="section-title">
                 <span id="adminReviewDateLabel">선택된 날짜의 한줄평</span>
                 <span class="review-count-badge" id="adminReviewCountBadge">0건</span>
@@ -2435,7 +2667,7 @@
        * 관리자 비밀번호 (클라이언트 사이드 검증이므로 보안 한계 있음.
        * 실제 서비스에서는 서버 측 인증으로 대체해야 합니다.)
        */
-      const ADMIN_PASSWORD = 'admin1234';
+      let ADMIN_PASSWORD = 'admin1234';
 
       /** localStorage 키 (하위 호환용) */
       const USERS_STORAGE_KEY = 'auth-system-users';
@@ -2526,14 +2758,6 @@
        */
       function registerUser(userData) {
         const users = loadUsersFromStorage();
-
-        // 중복 이름 검사 (이름으로만 식별 — 같은 이름은 허용하지 않음)
-        const isDuplicate = users.some(
-          (u) => u.name.trim() === userData.name.trim()
-        );
-        if (isDuplicate) {
-          return { success: false, reason: 'duplicate' };
-        }
 
         const newUser = {
           id: Date.now().toString(),
@@ -2988,22 +3212,19 @@
         const result = registerUser({ grade, classNum, name, password });
 
         if (!result.success) {
-          if (result.reason === 'duplicate') {
-            shakeElement(nameEl);
-            showAlert('registerAlert', 'registerAlertIcon', 'registerAlertMsg', 'error', '⚠️', `"${name}" 이름으로 이미 가입된 계정이 있습니다. 다른 이름을 사용하거나 로그인해주세요.`);
-            nameEl.focus();
-          }
           return;
         }
 
-        // --- 가입 성공 ---
-        showAlert('registerAlert', 'registerAlertIcon', 'registerAlertMsg', 'success', '✅', `가입이 완료되었습니다. ${grade}학년 ${classNum}반 ${name} 님, 환영합니다!`);
-        // 입력 필드 초기화 (알림 메시지는 유지)
-        gradeEl.value = '';
-        classEl.value = '';
-        nameEl.value = '';
-        pwEl.value = '';
-        pwConfEl.value = '';
+        // --- 가입 성공 → 로그인 화면으로 자동 이동 ---
+        resetRegisterForm();
+        resetUserLoginForm();
+        navigateTo(SCREENS.USER_LOGIN);
+        // 로그인 화면에 가입 완료 메시지 표시
+        const loginAlert = document.getElementById('userLoginAlert');
+        loginAlert.className = 'alert alert--success';
+        loginAlert.innerHTML = `<span class="alert-icon">✅</span><span id="userLoginAlertMsg">가입이 완료되었습니다! 로그인해주세요.</span>`;
+        loginAlert.style.display = 'flex';
+        requestAnimationFrame(() => document.getElementById('userLoginName').focus());
       }
 
       // =========================================
@@ -3452,6 +3673,7 @@
                 placeholder="오늘 하루를 한 줄로 남겨보세요"
                 value="${existingVal}"
               />
+              <button type="button" class="btn-review-submit" id="btnSubmitReview">${review ? '수정' : '등록'}</button>
               ${commentBtnHtml}
             </div>
           `;
@@ -3464,6 +3686,14 @@
                 e.preventDefault();
                 handleDailyReviewSave(user, dateKey, year, month, day);
               }
+            });
+          }
+
+          // 등록 버튼 클릭으로 저장
+          const btnSubmit = document.getElementById('btnSubmitReview');
+          if (btnSubmit) {
+            btnSubmit.addEventListener('click', () => {
+              handleDailyReviewSave(user, dateKey, year, month, day);
             });
           }
         } else {
@@ -4178,11 +4408,50 @@
        * 사용자 목록 + 공지사항 섹션 + 한줄평 관리 섹션을 모두 갱신합니다.
        */
       function renderDashboard() {
+        // 고아 한줄평 정리 (사용자 목록에 없는 사용자의 한줄평 삭제)
+        cleanOrphanReviews();
         renderUserList();
         initAdminNoticeSection();
         initAdminReviewSection();
         // 관리자 탭을 사용자 목록(기본)으로 초기화
         switchAdminTab('users');
+      }
+
+      /**
+       * 사용자 목록에 없는 사용자의 한줄평을 삭제합니다.
+       */
+      function cleanOrphanReviews() {
+        const users = loadUsersFromStorage();
+        const userIds = new Set(users.map(u => u.id));
+        const reviews = loadReviewsFromStorage();
+        const cleaned = reviews.filter(r => r && userIds.has(r.userId));
+        if (cleaned.length !== reviews.length) {
+          saveReviewsToStorage(cleaned);
+        }
+      }
+
+      /**
+       * 특정 사용자의 비밀번호를 1234로 초기화합니다.
+       */
+      function resetUserPassword(userId) {
+        const users = loadUsersFromStorage();
+        const idx = users.findIndex(u => u.id === userId);
+        if (idx === -1) return;
+        users[idx].password = '1234';
+        saveUsersToStorage(users);
+        alert('비밀번호가 1234로 초기화되었습니다.');
+        renderUserList();
+      }
+
+      /**
+       * 특정 사용자를 삭제하고 관련 한줄평도 함께 삭제합니다.
+       */
+      function deleteUser(userId) {
+        const users = loadUsersFromStorage().filter(u => u.id !== userId);
+        saveUsersToStorage(users);
+        const reviews = loadReviewsFromStorage().filter(r => r.userId !== userId);
+        saveReviewsToStorage(reviews);
+        renderUserList();
       }
 
       /**
@@ -4214,6 +4483,7 @@
             <td>${escapeHtml(user.grade)}학년</td>
             <td>${escapeHtml(user.classNum)}반</td>
             <td>${escapeHtml(user.name)}</td>
+            <td style="display:flex;gap:4px;"><button class="btn btn--warning btn--sm" type="button" onclick="if(confirm('${escapeAttr(user.name)} 학생의 비밀번호를 1234로 초기화할까요?')) resetUserPassword('${escapeAttr(user.id)}')" style="font-size:0.7rem;">PW초기화</button><button class="btn btn--danger btn--sm" type="button" onclick="if(confirm('${escapeAttr(user.name)} 학생을 삭제하시겠습니까?\\n한줄평 데이터도 함께 삭제됩니다.')) deleteUser('${escapeAttr(user.id)}')" style="font-size:0.7rem;">삭제</button></td>
           </tr>
         `).join('');
 
@@ -4225,6 +4495,7 @@
                 <th>학년</th>
                 <th>반</th>
                 <th>이름</th>
+                <th>관리</th>
               </tr>
             </thead>
             <tbody>
@@ -4234,14 +4505,158 @@
         `;
       }
 
+      // =========================================
+      // 관리자 한줄평 날짜 네비게이션
+      // =========================================
+
+      let adminReviewViewYear  = null;
+      let adminReviewViewMonth = null;
+      let adminReviewViewDay   = null;
+
       /**
        * 관리자 한줄평 관리 섹션 초기화.
-       * 날짜 필터를 오늘로 초기화하고 한줄평 목록을 불러옵니다.
+       * 날짜를 오늘로 설정하고 다이어리 스타일로 렌더링합니다.
        */
       function initAdminReviewSection() {
-        const dateFilterInput = document.getElementById('adminReviewDateFilter');
-        dateFilterInput.value = getTodayKey();
-        renderAdminReviewList(getTodayKey());
+        const now = new Date();
+        adminReviewViewYear  = now.getFullYear();
+        adminReviewViewMonth = now.getMonth();
+        adminReviewViewDay   = now.getDate();
+        renderAdminReviewSection();
+      }
+
+      /**
+       * 관리자 한줄평 월 이동
+       */
+      function navigateAdminReviewMonth(delta) {
+        adminReviewViewMonth += delta;
+        if (adminReviewViewMonth < 0) {
+          adminReviewViewMonth = 11;
+          adminReviewViewYear--;
+        } else if (adminReviewViewMonth > 11) {
+          adminReviewViewMonth = 0;
+          adminReviewViewYear++;
+        }
+        adminReviewViewDay = 1;
+        renderAdminReviewSection();
+      }
+
+      /**
+       * 관리자 한줄평 오늘로 이동
+       */
+      function navigateAdminReviewToday() {
+        const now = new Date();
+        adminReviewViewYear  = now.getFullYear();
+        adminReviewViewMonth = now.getMonth();
+        adminReviewViewDay   = now.getDate();
+        renderAdminReviewSection();
+      }
+
+      /**
+       * 관리자 한줄평 섹션 전체 렌더링 (다이어리 스타일)
+       */
+      function renderAdminReviewSection() {
+        const now = new Date();
+        const realYear  = now.getFullYear();
+        const realMonth = now.getMonth();
+        const realDay   = now.getDate();
+
+        const year  = adminReviewViewYear;
+        const month = adminReviewViewMonth;
+        const day   = adminReviewViewDay;
+        const isCurrentMonth = (year === realYear && month === realMonth);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // 헤더 설정
+        document.getElementById('adminReviewMonthNum').textContent = month + 1;
+        document.getElementById('adminReviewMonthEng').textContent = monthEngNames[month];
+        document.getElementById('adminReviewMonthYear').textContent = year;
+
+        // "오늘" 버튼
+        const btnToday = document.getElementById('btnAdminReviewToday');
+        if (isCurrentMonth && day === realDay) {
+          btnToday.classList.add('hidden');
+        } else {
+          btnToday.classList.remove('hidden');
+        }
+
+        // 날짜 스트립
+        renderAdminReviewDateStrip(year, month, day, daysInMonth, realYear, realMonth, realDay);
+
+        // 날짜 정보
+        renderAdminReviewDateInfo(year, month, day);
+
+        // 한줄평 목록 갱신
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        document.getElementById('adminReviewDateFilter').value = dateKey;
+        renderAdminReviewList(dateKey);
+      }
+
+      /**
+       * 관리자 한줄평 날짜 스트립 렌더링
+       */
+      function renderAdminReviewDateStrip(year, month, selectedDay, daysInMonth, realYear, realMonth, realDay) {
+        const dowKor = ['일', '월', '화', '수', '목', '금', '토'];
+        const strip = document.getElementById('adminReviewDateStrip');
+        strip.innerHTML = '';
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateObj = new Date(year, month, d);
+          const dow = dateObj.getDay();
+          const isToday = (year === realYear && month === realMonth && d === realDay);
+          const isSel = d === selectedDay;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'diary-date-btn';
+          if (dow === 0) btn.classList.add('is-sun');
+          if (dow === 6) btn.classList.add('is-sat');
+          if (isToday)  btn.classList.add('is-today-date');
+          if (isSel)    btn.classList.add('is-selected');
+
+          btn.innerHTML = `
+            <span class="strip-dow">${dowKor[dow]}</span>
+            <span class="strip-day">${d}</span>
+          `;
+
+          btn.addEventListener('click', () => {
+            adminReviewViewDay = d;
+            strip.querySelectorAll('.diary-date-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            renderAdminReviewDateInfo(year, month, d);
+            const dk = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            document.getElementById('adminReviewDateFilter').value = dk;
+            renderAdminReviewList(dk);
+          });
+
+          strip.appendChild(btn);
+        }
+
+        // 선택된 날짜 버튼이 보이도록 스크롤
+        requestAnimationFrame(() => {
+          const selBtn = strip.querySelector('.is-selected');
+          if (selBtn) {
+            selBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+          }
+        });
+      }
+
+      /**
+       * 관리자 한줄평 선택 날짜 정보 렌더링
+       */
+      function renderAdminReviewDateInfo(year, month, day) {
+        const dowKor = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dateObj = new Date(year, month, day);
+        const dow = dateObj.getDay();
+
+        document.getElementById('adminReviewInfoDay').textContent = day;
+        const dowEl = document.getElementById('adminReviewInfoDow');
+        dowEl.textContent = dowKor[dow];
+        dowEl.className = 'info-dow';
+        if (dow === 0) dowEl.classList.add('is-sun');
+        if (dow === 6) dowEl.classList.add('is-sat');
+
+        document.getElementById('adminReviewInfoLunar').textContent = solarToLunar(year, month + 1, day);
       }
 
       /**
@@ -4256,7 +4671,24 @@
 
         dateLabel.textContent = `${formatDateKorean(dateKey)} 한줄평`;
 
-        const reviews = getReviewsByDate(dateKey);
+        // 일별 한줄평만 표시 (시간표 데이터 제외 + 사용자당 중복 제거)
+        const allData = loadReviewsFromStorage();
+        const seen = new Set();
+        const reviews = allData
+          .filter((r) => r && r.dateKey === dateKey)
+          .filter((r) => {
+            const key = r.userId + '_' + r.dateKey;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          })
+          .sort((a, b) => {
+            const gradeDiff = Number(a.userGrade) - Number(b.userGrade);
+            if (gradeDiff !== 0) return gradeDiff;
+            const classDiff = Number(a.userClass) - Number(b.userClass);
+            if (classDiff !== 0) return classDiff;
+            return a.userName.localeCompare(b.userName);
+          });
         countBadge.textContent = `${reviews.length}건`;
 
         if (reviews.length === 0) {
@@ -4280,19 +4712,12 @@
             `
             : '';
 
-          // dateKey가 'YYYY-MM-DD-HH' 형식이면 시간대 뱃지 표시
-          const hourPart   = review.dateKey.length > 10 ? review.dateKey.slice(-2) : null;
-          const hourBadge  = hourPart
-            ? `<span class="admin-review-hour-badge">${hourPart}시</span>`
-            : '';
-
           return `
             <div class="admin-review-item">
               <div class="admin-review-item-header">
                 <span class="admin-review-user-badge">
                   ${escapeHtml(review.userGrade)}학년 ${escapeHtml(review.userClass)}반 ${escapeHtml(review.userName)}
                 </span>
-                ${hourBadge}
               </div>
               <div class="admin-review-item-body">
                 <div class="admin-review-content">${escapeHtml(review.content)}</div>
@@ -4413,9 +4838,20 @@
        * Firebase Realtime Database 리스너를 설정합니다.
        * 다른 기기에서 데이터가 변경되면 캐시를 갱신하고 현재 화면을 다시 렌더링합니다.
        */
+      /**
+       * Firebase snap.val() 결과를 안전하게 배열로 변환합니다.
+       * Firebase는 배열을 객체(인덱스 키)로 반환할 수 있기 때문입니다.
+       */
+      function toArray(val) {
+        if (!val) return [];
+        if (Array.isArray(val)) return val;
+        // 객체인 경우 값만 추출하여 배열로 변환
+        return Object.values(val);
+      }
+
       function initFirebaseListeners() {
         db.ref('users').on('value', snap => {
-          _usersCache = snap.val() || [];
+          _usersCache = toArray(snap.val());
           // 관리자 대시보드에서 사용자 목록 실시간 갱신
           if (_currentScreen === SCREENS.ADMIN_DASHBOARD) {
             try { renderUserList(); } catch(e) {}
@@ -4423,7 +4859,7 @@
         });
 
         db.ref('notices').on('value', snap => {
-          _noticesCache = snap.val() || [];
+          _noticesCache = toArray(snap.val());
           // 사용자 홈에서 공지사항 실시간 갱신
           if (_currentScreen === SCREENS.USER_HOME && currentUser) {
             try { renderUserNoticeCard(currentUser); } catch(e) {}
@@ -4435,7 +4871,7 @@
         });
 
         db.ref('reviews').on('value', snap => {
-          _reviewsCache = snap.val() || [];
+          _reviewsCache = toArray(snap.val());
           // 사용자 홈에서 한줄평 실시간 갱신
           if (_currentScreen === SCREENS.USER_HOME && currentUser) {
             try { renderDiaryView(currentUser); } catch(e) {}
@@ -4462,9 +4898,15 @@
             db.ref('reviews').once('value'),
           ]);
 
-          _usersCache   = usersSnap.val()   || [];
-          _noticesCache  = noticesSnap.val()  || [];
-          _reviewsCache  = reviewsSnap.val()  || [];
+          _usersCache   = toArray(usersSnap.val());
+          _noticesCache  = toArray(noticesSnap.val());
+          _reviewsCache  = toArray(reviewsSnap.val());
+
+          // 관리자 비밀번호 로드
+          const adminPwSnap = await db.ref('adminPassword').once('value');
+          if (adminPwSnap.val()) {
+            ADMIN_PASSWORD = adminPwSnap.val();
+          }
 
           // localStorage에 데이터가 있고 Firebase가 비어있으면 마이그레이션
           if (_usersCache.length === 0) {
@@ -4576,6 +5018,23 @@
         });
 
         // --- 사용자 홈 화면 ---
+        document.getElementById('btnChangePw').addEventListener('click', () => {
+          if (!currentUser) return;
+          const newPw = prompt('새 비밀번호를 입력하세요 (4자 이상):');
+          if (!newPw) return;
+          if (newPw.length < 4) {
+            alert('비밀번호는 4자 이상이어야 합니다.');
+            return;
+          }
+          const users = loadUsersFromStorage();
+          const idx = users.findIndex(u => u.id === currentUser.id);
+          if (idx === -1) return;
+          users[idx].password = newPw;
+          currentUser.password = newPw;
+          saveUsersToStorage(users);
+          alert('비밀번호가 변경되었습니다!');
+        });
+
         document.getElementById('btnUserLogout').addEventListener('click', () => {
           currentUser = null;
           navigateTo(SCREENS.MAIN);
@@ -4621,7 +5080,126 @@
           navigateTo(SCREENS.MAIN);
         });
 
+        // 비밀번호 찾기 토글
+        document.getElementById('btnAdminForgotPw').addEventListener('click', () => {
+          const form = document.getElementById('adminResetPwForm');
+          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+          document.getElementById('adminResetAlert').style.display = 'none';
+        });
+
+        // 비밀번호 초기화 실행
+        document.getElementById('btnAdminResetPw').addEventListener('click', async () => {
+          const name = document.getElementById('resetAdminName').value.trim();
+          const birth = document.getElementById('resetAdminBirth').value;
+          const phone = document.getElementById('resetAdminPhone').value.trim();
+
+          const alertEl = document.getElementById('adminResetAlert');
+          const alertMsg = document.getElementById('adminResetAlertMsg');
+
+          if (!name || !birth || !phone) {
+            alertEl.className = 'alert alert--error';
+            alertEl.style.display = 'flex';
+            alertMsg.textContent = '모든 항목을 입력해주세요.';
+            return;
+          }
+
+          // Firebase에서 관리자 정보 가져와서 비교
+          try {
+            const snap = await db.ref('adminProfile').once('value');
+            const data = snap.val();
+
+            if (!data || !data.name || !data.birth || !data.phone) {
+              alertEl.className = 'alert alert--error';
+              alertEl.style.display = 'flex';
+              alertMsg.textContent = '관리자 정보가 등록되지 않았습니다. 비밀번호 초기화가 불가능합니다.';
+              return;
+            }
+
+            if (data.name !== name || data.birth !== birth || data.phone !== phone) {
+              alertEl.className = 'alert alert--error';
+              alertEl.style.display = 'flex';
+              alertMsg.textContent = '입력한 정보가 일치하지 않습니다.';
+              return;
+            }
+
+            // 일치 → 비밀번호 초기화
+            ADMIN_PASSWORD = 'admin1234';
+            await db.ref('adminPassword').set('admin1234');
+
+            alertEl.className = 'alert alert--success';
+            alertEl.innerHTML = '<span class="alert-icon">✅</span><span id="adminResetAlertMsg">비밀번호가 admin1234로 초기화되었습니다!</span>';
+            alertEl.style.display = 'flex';
+
+            // 입력 필드 초기화
+            document.getElementById('resetAdminName').value = '';
+            document.getElementById('resetAdminBirth').value = '';
+            document.getElementById('resetAdminPhone').value = '';
+          } catch (err) {
+            alertEl.className = 'alert alert--error';
+            alertEl.style.display = 'flex';
+            alertMsg.textContent = '서버 오류가 발생했습니다. 다시 시도해주세요.';
+          }
+        });
+
         // --- 관리자 대시보드 ---
+        // 관리자 드롭다운 토글
+        const adminDropdownBtn = document.getElementById('btnAdminDropdown');
+        const adminDropdownMenu = document.getElementById('adminDropdownMenu');
+        adminDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = adminDropdownMenu.classList.toggle('open');
+          adminDropdownBtn.classList.toggle('open', isOpen);
+        });
+        document.addEventListener('click', () => {
+          adminDropdownMenu.classList.remove('open');
+          adminDropdownBtn.classList.remove('open');
+        });
+
+        // 드롭다운: 관리자 정보
+        document.getElementById('btnAdminDropdownProfile').addEventListener('click', () => {
+          adminDropdownMenu.classList.remove('open');
+          adminDropdownBtn.classList.remove('open');
+          const panel = document.getElementById('adminProfilePanel');
+          // Firebase에서 관리자 정보 불러오기
+          db.ref('adminProfile').once('value').then(snap => {
+            const data = snap.val() || {};
+            document.getElementById('adminProfileName').value = data.name || '';
+            document.getElementById('adminProfileBirth').value = data.birth || '';
+            document.getElementById('adminProfilePhone').value = data.phone || '';
+          });
+          panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // 관리자 정보 패널 닫기
+        document.getElementById('btnCloseAdminProfile').addEventListener('click', () => {
+          document.getElementById('adminProfilePanel').style.display = 'none';
+        });
+
+        // 관리자 정보 저장
+        document.getElementById('btnSaveAdminProfile').addEventListener('click', () => {
+          const name = document.getElementById('adminProfileName').value.trim();
+          const birth = document.getElementById('adminProfileBirth').value;
+          const phone = document.getElementById('adminProfilePhone').value.trim();
+          db.ref('adminProfile').set({ name, birth, phone });
+          alert('관리자 정보가 저장되었습니다!');
+          document.getElementById('adminProfilePanel').style.display = 'none';
+        });
+
+        // 드롭다운: 비밀번호 변경
+        document.getElementById('btnAdminDropdownChangePw').addEventListener('click', () => {
+          adminDropdownMenu.classList.remove('open');
+          adminDropdownBtn.classList.remove('open');
+          const newPw = prompt('새 관리자 비밀번호를 입력하세요 (4자 이상):');
+          if (!newPw) return;
+          if (newPw.length < 4) {
+            alert('비밀번호는 4자 이상이어야 합니다.');
+            return;
+          }
+          ADMIN_PASSWORD = newPw;
+          db.ref('adminPassword').set(newPw);
+          alert('관리자 비밀번호가 변경되었습니다!');
+        });
+
         document.getElementById('btnAdminLogout').addEventListener('click', handleAdminLogout);
 
         // 관리자 탭 네비게이션 이벤트
@@ -4650,21 +5228,15 @@
           updateNoticeCharCount(e.target.value.length, charCount);
         });
 
-        // 날짜 필터 조회 버튼
-        document.getElementById('btnFilterReviews').addEventListener('click', () => {
-          const dateKey = document.getElementById('adminReviewDateFilter').value;
-          if (!dateKey) {
-            alert('날짜를 선택해주세요.');
-            return;
-          }
-          renderAdminReviewList(dateKey);
+        // 관리자 한줄평 월 네비게이션
+        document.getElementById('btnAdminReviewMonthPrev').addEventListener('click', () => {
+          navigateAdminReviewMonth(-1);
         });
-
-        // 날짜 입력창에서 Enter 키로 조회
-        document.getElementById('adminReviewDateFilter').addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById('btnFilterReviews').click();
-          }
+        document.getElementById('btnAdminReviewMonthNext').addEventListener('click', () => {
+          navigateAdminReviewMonth(1);
+        });
+        document.getElementById('btnAdminReviewToday').addEventListener('click', () => {
+          navigateAdminReviewToday();
         });
 
         // --- 초기 화면: 메인(역할 선택) ---
