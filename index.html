@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>회원 인증 시스템</title>
+    <title>3학년 2반</title>
+    <!-- Google Fonts: Nanum Gothic (둥글고 귀여운 한글 폰트) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet" />
     <style>
       /* ===========================
          전역 스타일 초기화 및 기본값
@@ -17,39 +21,52 @@
       }
 
       :root {
-        --color-primary: #4f46e5;
-        --color-primary-hover: #4338ca;
-        --color-primary-light: #eef2ff;
-        --color-danger: #ef4444;
-        --color-danger-hover: #dc2626;
-        --color-success: #22c55e;
-        --color-success-light: #f0fdf4;
-        --color-warning: #f59e0b;
-        --color-warning-light: #fffbeb;
-        --color-text-primary: #111827;
-        --color-text-secondary: #6b7280;
-        --color-text-muted: #9ca3af;
-        --color-border: #e5e7eb;
-        --color-bg: #f3f4f6;
+        /* 파스텔 라벤더/핑크 계열 프라이머리 색상 */
+        --color-primary: #b48de8;
+        --color-primary-hover: #9b6fd4;
+        --color-primary-light: #f5eeff;
+        /* 부드러운 파스텔 위험(danger) 색상 */
+        --color-danger: #f08080;
+        --color-danger-hover: #e06060;
+        /* 파스텔 민트 성공(success) 색상 */
+        --color-success: #6dcfb0;
+        --color-success-light: #edfaf5;
+        /* 파스텔 노란 경고(warning) 색상 */
+        --color-warning: #f5c76a;
+        --color-warning-light: #fffbee;
+        /* 텍스트 색상 (다소 부드럽게) */
+        --color-text-primary: #3d3250;
+        --color-text-secondary: #8878a8;
+        --color-text-muted: #bbadd4;
+        /* 테두리 & 배경 */
+        --color-border: #e8d9f8;
+        --color-bg: #fdf7ff;
         --color-surface: #ffffff;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
-        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.13);
-        --radius-sm: 8px;
-        --radius-md: 14px;
-        --radius-lg: 20px;
+        /* 은은하고 부드러운 그림자 */
+        --shadow-sm: 0 2px 8px rgba(180, 141, 232, 0.12);
+        --shadow-md: 0 6px 20px rgba(180, 141, 232, 0.18);
+        --shadow-lg: 0 12px 36px rgba(180, 141, 232, 0.22);
+        /* 더 둥근 모서리 */
+        --radius-sm: 14px;
+        --radius-md: 20px;
+        --radius-lg: 28px;
         --transition: 0.2s ease;
       }
 
       body {
-        font-family: 'Segoe UI', 'Apple SD Gothic Neo', '맑은 고딕', sans-serif;
+        /* Nanum Gothic 우선 적용, 미지원 시 폴백 */
+        font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', '맑은 고딕', sans-serif;
         background: var(--color-bg);
+        /* 연한 라벤더 그라디언트 배경 */
+        background-image: radial-gradient(ellipse at top left, #f0e6ff 0%, #fdf7ff 50%, #e8f8f5 100%);
+        background-attachment: fixed;
         color: var(--color-text-primary);
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: flex-start;
         padding: 48px 16px 80px;
+        letter-spacing: 0.01em;
       }
 
       /* ===========================
@@ -81,7 +98,8 @@
         font-size: 1.9rem;
         font-weight: 800;
         color: var(--color-primary);
-        letter-spacing: -0.5px;
+        /* 귀여운 느낌을 위해 자간 살짝 넓힘 */
+        letter-spacing: 0.04em;
       }
 
       .app-header p {
@@ -115,6 +133,8 @@
         background: var(--color-surface);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
+        /* 파스텔 라벤더 테두리로 귀여운 윤곽선 */
+        border: 1.5px solid var(--color-border);
         overflow: hidden;
       }
 
@@ -124,8 +144,9 @@
 
       .card-header {
         padding: 20px 24px 16px;
-        border-bottom: 1px solid var(--color-border);
-        background: var(--color-primary-light);
+        border-bottom: 1.5px solid var(--color-border);
+        /* 라벤더 그라디언트 카드 헤더 */
+        background: linear-gradient(135deg, #f5eeff 0%, #fce8f8 100%);
       }
 
       .card-header h2 {
@@ -165,13 +186,14 @@
       .form-textarea {
         width: 100%;
         border: 2px solid var(--color-border);
+        /* 입력창도 둥글게 */
         border-radius: var(--radius-sm);
         padding: 13px 16px;
         font-size: 1rem;
         color: var(--color-text-primary);
         outline: none;
         transition: border-color var(--transition), box-shadow var(--transition);
-        background: var(--color-bg);
+        background: #fdf7ff;
         font-family: inherit;
         letter-spacing: 0.02em;
         appearance: none;
@@ -187,7 +209,8 @@
       .form-select:focus,
       .form-textarea:focus {
         border-color: var(--color-primary);
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        /* 라벤더 포커스 글로우 */
+        box-shadow: 0 0 0 4px rgba(180, 141, 232, 0.22);
         background: var(--color-surface);
       }
 
@@ -228,37 +251,44 @@
         justify-content: center;
         gap: 8px;
         border: none;
-        border-radius: var(--radius-sm);
-        padding: 13px 20px;
+        /* 버튼을 pill형으로 (매우 둥글게) */
+        border-radius: 999px;
+        padding: 13px 24px;
         font-size: 0.97rem;
         font-weight: 700;
         cursor: pointer;
-        transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+        transition: background var(--transition), transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--transition);
         font-family: inherit;
         white-space: nowrap;
+        letter-spacing: 0.03em;
+      }
+
+      /* 호버 시 살짝 위로 튀어오르는 효과 */
+      .btn:hover {
+        transform: translateY(-2px) scale(1.03);
       }
 
       .btn:active {
-        transform: scale(0.97);
+        transform: scale(0.96);
       }
 
       .btn--full {
         width: 100%;
       }
 
-      /* 기본(primary) 버튼 */
+      /* 기본(primary) 버튼 — 파스텔 라벤더 그라디언트 */
       .btn--primary {
-        background: var(--color-primary);
+        background: linear-gradient(135deg, #c9a6f0 0%, #b48de8 100%);
         color: #fff;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 14px rgba(180, 141, 232, 0.35);
       }
 
       .btn--primary:hover {
-        background: var(--color-primary-hover);
-        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #b48de8 0%, #9b6fd4 100%);
+        box-shadow: 0 6px 20px rgba(180, 141, 232, 0.45);
       }
 
-      /* 보조(secondary) 버튼 */
+      /* 보조(secondary) 버튼 — 파스텔 테두리 */
       .btn--secondary {
         background: var(--color-surface);
         color: var(--color-primary);
@@ -269,7 +299,7 @@
         background: var(--color-primary-light);
       }
 
-      /* 위험(danger) 버튼 */
+      /* 위험(danger) 버튼 — 부드러운 파스텔 레드 */
       .btn--danger {
         background: none;
         color: var(--color-danger);
@@ -277,15 +307,17 @@
       }
 
       .btn--danger:hover {
-        background: #fee2e2;
+        /* 연한 파스텔 핑크 호버 */
+        background: #fde8e8;
       }
 
       /* 고스트(ghost) 버튼 — 텍스트만 */
       .btn--ghost {
         background: none;
         color: var(--color-text-secondary);
-        padding: 8px 12px;
+        padding: 8px 16px;
         font-size: 0.88rem;
+        border-radius: 999px;
       }
 
       .btn--ghost:hover {
@@ -293,16 +325,16 @@
         background: var(--color-primary-light);
       }
 
-      /* 성공(success) 버튼 */
+      /* 성공(success) 버튼 — 파스텔 민트 */
       .btn--success {
-        background: var(--color-success);
+        background: linear-gradient(135deg, #84dbbe 0%, #6dcfb0 100%);
         color: #fff;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 14px rgba(109, 207, 176, 0.35);
       }
 
       .btn--success:hover {
-        background: #16a34a;
-        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #6dcfb0 0%, #52bfa0 100%);
+        box-shadow: 0 6px 20px rgba(109, 207, 176, 0.45);
       }
 
       /* 텍스트 링크 버튼 */
@@ -344,27 +376,34 @@
       }
 
       .alert--error {
-        background: #fee2e2;
-        color: #b91c1c;
-        border: 1px solid #fca5a5;
+        /* 파스텔 핑크 에러 */
+        background: #fdeaea;
+        color: #c05050;
+        border: 1px solid #f5b0b0;
+        border-radius: var(--radius-sm);
       }
 
       .alert--success {
+        /* 파스텔 민트 성공 */
         background: var(--color-success-light);
-        color: #15803d;
-        border: 1px solid #86efac;
+        color: #2e8a6e;
+        border: 1px solid #a8e8d4;
+        border-radius: var(--radius-sm);
       }
 
       .alert--warning {
+        /* 파스텔 노랑 경고 */
         background: var(--color-warning-light);
-        color: #92400e;
-        border: 1px solid #fcd34d;
+        color: #9a6a00;
+        border: 1px solid #f5d88a;
+        border-radius: var(--radius-sm);
       }
 
       .alert--info {
         background: var(--color-primary-light);
         color: var(--color-primary);
-        border: 1px solid #c7d2fe;
+        border: 1px solid #dcc8f5;
+        border-radius: var(--radius-sm);
       }
 
       .alert-icon {
@@ -394,19 +433,20 @@
           border-color var(--transition),
           box-shadow var(--transition),
           background var(--transition),
-          transform var(--transition);
+          /* 튀는 스프링 효과 */
+          transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         box-shadow: var(--shadow-sm);
       }
 
       .role-card:hover {
         border-color: var(--color-primary);
         box-shadow: var(--shadow-md);
-        background: var(--color-primary-light);
-        transform: translateY(-2px);
+        background: linear-gradient(135deg, #f5eeff 0%, #fce8f8 100%);
+        transform: translateY(-4px) scale(1.03);
       }
 
       .role-card:active {
-        transform: translateY(0) scale(0.98);
+        transform: translateY(0) scale(0.97);
       }
 
       .role-card-icon {
@@ -432,16 +472,18 @@
          사용자 홈 화면 — 프로필 카드
          =========================== */
       .profile-icon-wrap {
-        width: 88px;
-        height: 88px;
-        background: var(--color-primary-light);
+        width: 96px;
+        height: 96px;
+        /* 파스텔 라벤더→핑크 그라디언트 아이콘 배경 */
+        background: linear-gradient(135deg, #f0e0ff 0%, #fce8f8 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 20px;
-        font-size: 2.4rem;
-        border: 3px solid #c7d2fe;
+        font-size: 2.6rem;
+        border: 3px solid #dcc8f5;
+        box-shadow: 0 6px 18px rgba(180, 141, 232, 0.22);
         animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
@@ -489,9 +531,10 @@
       }
 
       .info-table th {
-        font-weight: 600;
+        font-weight: 700;
         color: var(--color-text-secondary);
-        background: var(--color-bg);
+        /* 파스텔 라벤더 테이블 헤더 */
+        background: #f5eeff;
         width: 35%;
       }
 
@@ -507,19 +550,20 @@
         margin-bottom: 0;
       }
 
-      /* 오늘 날짜 표시 뱃지 */
+      /* 오늘 날짜 표시 뱃지 — 파스텔 pill 스타일 */
       .today-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: var(--color-primary-light);
+        background: linear-gradient(135deg, #f0e0ff 0%, #fce8f8 100%);
         color: var(--color-primary);
         font-size: 0.8rem;
         font-weight: 700;
-        padding: 4px 12px;
-        border-radius: 99px;
+        padding: 6px 16px;
+        border-radius: 999px;
         margin-bottom: 12px;
-        border: 1px solid #c7d2fe;
+        border: 1.5px solid #dcc8f5;
+        box-shadow: 0 2px 8px rgba(180, 141, 232, 0.15);
       }
 
       /* 한줄평 입력 영역 + 버튼 묶음 */
@@ -555,14 +599,15 @@
 
       /* 개별 한줄평 아이템 */
       .review-item {
-        border: 1px solid var(--color-border);
+        border: 1.5px solid var(--color-border);
         border-radius: var(--radius-md);
         overflow: hidden;
-        transition: box-shadow var(--transition);
+        transition: box-shadow var(--transition), transform var(--transition);
       }
 
       .review-item:hover {
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
       }
 
       .review-item-header {
@@ -570,8 +615,9 @@
         align-items: center;
         justify-content: space-between;
         padding: 10px 14px;
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
+        /* 파스텔 라벤더 헤더 */
+        background: linear-gradient(135deg, #f5eeff 0%, #fce8f8 100%);
+        border-bottom: 1.5px solid var(--color-border);
       }
 
       .review-item-date {
@@ -596,13 +642,13 @@
         word-break: break-all;
       }
 
-      /* 관리자 평가 코멘트 표시 영역 */
+      /* 관리자 평가 코멘트 표시 영역 — 파스텔 노랑 */
       .admin-comment-box {
         margin-top: 10px;
         padding: 10px 14px;
-        background: var(--color-warning-light);
+        background: #fffbee;
         border-radius: var(--radius-sm);
-        border-left: 3px solid var(--color-warning);
+        border-left: 4px solid #f5c76a;
         display: flex;
         align-items: flex-start;
         gap: 8px;
@@ -611,14 +657,14 @@
       .admin-comment-label {
         font-size: 0.75rem;
         font-weight: 700;
-        color: #92400e;
+        color: #a07800;
         flex-shrink: 0;
         margin-top: 2px;
       }
 
       .admin-comment-text {
         font-size: 0.88rem;
-        color: #78350f;
+        color: #7a5a00;
         line-height: 1.6;
         word-break: break-all;
       }
@@ -652,13 +698,15 @@
       }
 
       .user-count-badge {
-        background: var(--color-primary);
+        /* 파스텔 라벤더 배지 */
+        background: linear-gradient(135deg, #c9a6f0 0%, #b48de8 100%);
         color: #fff;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 99px;
+        padding: 3px 12px;
+        border-radius: 999px;
         letter-spacing: 0.03em;
+        box-shadow: 0 2px 8px rgba(180, 141, 232, 0.3);
       }
 
       .user-list-table {
@@ -671,7 +719,8 @@
       }
 
       .user-list-table thead tr {
-        background: var(--color-primary-light);
+        /* 파스텔 그라디언트 테이블 헤더 */
+        background: linear-gradient(135deg, #f5eeff 0%, #fce8f8 100%);
       }
 
       .user-list-table th {
@@ -679,7 +728,7 @@
         font-weight: 700;
         color: var(--color-primary);
         text-align: left;
-        border-bottom: 2px solid #c7d2fe;
+        border-bottom: 2px solid #dcc8f5;
         white-space: nowrap;
       }
 
@@ -694,7 +743,8 @@
       }
 
       .user-list-table tbody tr:hover {
-        background: var(--color-bg);
+        /* 호버 시 연한 파스텔 */
+        background: #f9f2ff;
       }
 
       /* 사용자 없음 안내 */
@@ -739,9 +789,14 @@
 
       /* 관리자용 한줄평 아이템 */
       .admin-review-item {
-        border: 1px solid var(--color-border);
+        border: 1.5px solid var(--color-border);
         border-radius: var(--radius-md);
         overflow: hidden;
+        transition: box-shadow var(--transition);
+      }
+
+      .admin-review-item:hover {
+        box-shadow: var(--shadow-sm);
       }
 
       .admin-review-item-header {
@@ -749,18 +804,21 @@
         align-items: center;
         gap: 8px;
         padding: 10px 14px;
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
+        /* 파스텔 그라디언트 헤더 */
+        background: linear-gradient(135deg, #f5eeff 0%, #fce8f8 100%);
+        border-bottom: 1.5px solid var(--color-border);
       }
 
       .admin-review-user-badge {
-        background: var(--color-primary);
+        /* 파스텔 라벤더 사용자 배지 */
+        background: linear-gradient(135deg, #c9a6f0 0%, #b48de8 100%);
         color: #fff;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 99px;
+        padding: 4px 12px;
+        border-radius: 999px;
         white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(180, 141, 232, 0.3);
       }
 
       .admin-review-item-body {
@@ -788,13 +846,13 @@
         font-size: 0.88rem;
       }
 
-      /* 이미 평가가 있는 경우 표시 영역 */
+      /* 이미 평가가 있는 경우 표시 영역 — 파스텔 민트 */
       .existing-comment-box {
         margin-bottom: 10px;
         padding: 9px 12px;
-        background: var(--color-success-light);
+        background: #edfaf5;
         border-radius: var(--radius-sm);
-        border-left: 3px solid var(--color-success);
+        border-left: 4px solid #6dcfb0;
         display: flex;
         align-items: flex-start;
         gap: 8px;
@@ -803,14 +861,14 @@
       .existing-comment-label {
         font-size: 0.75rem;
         font-weight: 700;
-        color: #15803d;
+        color: #2e8a6e;
         flex-shrink: 0;
         margin-top: 2px;
       }
 
       .existing-comment-text {
         font-size: 0.88rem;
-        color: #166534;
+        color: #1e6655;
         line-height: 1.6;
         word-break: break-all;
       }
@@ -830,15 +888,16 @@
         margin-bottom: 8px;
       }
 
-      /* 한줄평 수 뱃지 (관리자) */
+      /* 한줄평 수 뱃지 (관리자) — 파스텔 민트 */
       .review-count-badge {
-        background: var(--color-success);
+        background: linear-gradient(135deg, #84dbbe 0%, #6dcfb0 100%);
         color: #fff;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 2px 10px;
-        border-radius: 99px;
+        padding: 3px 12px;
+        border-radius: 999px;
         letter-spacing: 0.03em;
+        box-shadow: 0 2px 8px rgba(109, 207, 176, 0.3);
       }
 
       /* ===========================
@@ -859,13 +918,15 @@
       }
 
       .dashboard-topbar .admin-badge {
-        background: var(--color-primary);
+        /* 관리자 배지 — 파스텔 라벤더 그라디언트 */
+        background: linear-gradient(135deg, #c9a6f0 0%, #b48de8 100%);
         color: #fff;
         font-size: 0.72rem;
         font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 99px;
+        padding: 4px 14px;
+        border-radius: 999px;
         letter-spacing: 0.04em;
+        box-shadow: 0 2px 8px rgba(180, 141, 232, 0.3);
       }
 
       /* ===========================
@@ -965,7 +1026,8 @@
 
       .input-error-shake {
         animation: shake 0.35s ease;
-        border-color: var(--color-danger) !important;
+        /* 파스텔 레드 에러 테두리 */
+        border-color: #f08080 !important;
       }
     </style>
   </head>
@@ -974,8 +1036,8 @@
 
       <!-- 앱 공통 헤더 -->
       <header class="app-header">
-        <span class="header-icon">🏫</span>
-        <h1>회원 인증 시스템</h1>
+        <span class="header-icon">🌸</span>
+        <h1>우리 반 홈페이지 ✨</h1>
         <p>회원가입 후 이름과 비밀번호로 로그인하세요.</p>
       </header>
 
@@ -986,19 +1048,19 @@
         <div class="role-select-grid">
           <!-- 관리자 로그인 -->
           <div class="role-card" id="btnGoAdminLogin" role="button" tabindex="0" aria-label="관리자 로그인으로 이동">
-            <span class="role-card-icon">🛠️</span>
+            <span class="role-card-icon">🎀</span>
             <div class="role-card-title">관리자 로그인</div>
             <div class="role-card-desc">관리자 전용<br/>대시보드 접속</div>
           </div>
           <!-- 사용자 로그인 -->
           <div class="role-card" id="btnGoUserLogin" role="button" tabindex="0" aria-label="사용자 로그인으로 이동">
-            <span class="role-card-icon">👤</span>
+            <span class="role-card-icon">🐰</span>
             <div class="role-card-title">사용자 로그인</div>
             <div class="role-card-desc">이름 + 비밀번호로<br/>로그인</div>
           </div>
           <!-- 회원가입 -->
           <div class="role-card" id="btnGoRegister" role="button" tabindex="0" aria-label="회원가입으로 이동">
-            <span class="role-card-icon">✏️</span>
+            <span class="role-card-icon">🌟</span>
             <div class="role-card-title">회원가입</div>
             <div class="role-card-desc">정보를 입력하여<br/>회원 등록</div>
           </div>
@@ -1011,12 +1073,12 @@
       <div class="screen" id="screenRegister">
         <div class="back-bar">
           <button class="btn btn--ghost" id="btnBackFromRegister" type="button">
-            ← 처음으로
+            🌸 처음으로
           </button>
         </div>
         <div class="card">
           <div class="card-header">
-            <h2>회원가입</h2>
+            <h2>🌟 회원가입</h2>
             <p>학년, 반, 이름과 비밀번호를 입력하여 회원으로 등록하세요.</p>
           </div>
           <div class="card-body">
@@ -1035,9 +1097,6 @@
                   <option value="1">1학년</option>
                   <option value="2">2학년</option>
                   <option value="3">3학년</option>
-                  <option value="4">4학년</option>
-                  <option value="5">5학년</option>
-                  <option value="6">6학년</option>
                 </select>
               </div>
               <div class="form-group">
@@ -1050,10 +1109,6 @@
                   <option value="4">4반</option>
                   <option value="5">5반</option>
                   <option value="6">6반</option>
-                  <option value="7">7반</option>
-                  <option value="8">8반</option>
-                  <option value="9">9반</option>
-                  <option value="10">10반</option>
                 </select>
               </div>
             </div>
@@ -1112,12 +1167,12 @@
       <div class="screen" id="screenUserLogin">
         <div class="back-bar">
           <button class="btn btn--ghost" id="btnBackFromUserLogin" type="button">
-            ← 처음으로
+            🌸 처음으로
           </button>
         </div>
         <div class="card">
           <div class="card-header">
-            <h2>사용자 로그인</h2>
+            <h2>🐰 사용자 로그인</h2>
             <p>등록된 이름과 비밀번호를 입력하여 로그인하세요.</p>
           </div>
           <div class="card-body">
@@ -1171,7 +1226,7 @@
         <div class="card">
           <div class="card-body">
             <!-- 환영 아이콘 -->
-            <div class="profile-icon-wrap" aria-hidden="true">👋</div>
+            <div class="profile-icon-wrap" aria-hidden="true">🐰</div>
             <h2 class="welcome-title" id="welcomeTitle">환영합니다!</h2>
             <p class="welcome-subtitle" id="welcomeSubtitle">로그인에 성공하였습니다.</p>
 
@@ -1202,13 +1257,13 @@
         <!-- 오늘의 한줄평 작성 카드 -->
         <div class="card">
           <div class="card-header">
-            <h2>오늘의 한줄평</h2>
+            <h2>🌈 오늘의 한줄평</h2>
             <p>오늘 하루를 한 줄로 표현해보세요. 날짜가 바뀌면 새로 작성할 수 있습니다.</p>
           </div>
           <div class="card-body">
             <!-- 오늘 날짜 표시 -->
             <div class="today-badge" id="todayBadge">
-              <span>📅</span>
+              <span>🌷</span>
               <span id="todayDateText">오늘</span>
             </div>
 
@@ -1240,7 +1295,7 @@
         <!-- 내 한줄평 목록 카드 -->
         <div class="card">
           <div class="card-header">
-            <h2>내 한줄평 목록</h2>
+            <h2>📖 내 한줄평 목록</h2>
             <p>내가 작성한 한줄평과 선생님의 평가를 확인하세요.</p>
           </div>
           <div class="card-body" style="padding: 20px 24px;">
@@ -1256,12 +1311,12 @@
       <div class="screen" id="screenAdminLogin">
         <div class="back-bar">
           <button class="btn btn--ghost" id="btnBackFromAdminLogin" type="button">
-            ← 처음으로
+            🌸 처음으로
           </button>
         </div>
         <div class="card">
           <div class="card-header">
-            <h2>관리자 로그인</h2>
+            <h2>🎀 관리자 로그인</h2>
             <p>관리자 비밀번호를 입력하여 대시보드에 접속하세요.</p>
           </div>
           <div class="card-body">
@@ -1296,14 +1351,14 @@
       <div class="screen" id="screenAdminDashboard">
         <!-- 대시보드 상단 바 -->
         <div class="dashboard-topbar">
-          <h2>관리자 대시보드</h2>
+          <h2>🎀 관리자 대시보드</h2>
           <span class="admin-badge">관리자</span>
         </div>
 
         <!-- 가입 사용자 목록 카드 -->
         <div class="card">
           <div class="card-header">
-            <h2>가입 사용자 목록</h2>
+            <h2>🐥 가입 사용자 목록</h2>
             <p>현재 시스템에 등록된 모든 사용자 목록입니다. 학년 · 반 순으로 정렬됩니다.</p>
           </div>
           <div class="card-body" style="padding: 20px 24px;">
@@ -1319,7 +1374,7 @@
         <!-- 한줄평 관리 카드 -->
         <div class="card">
           <div class="card-header">
-            <h2>한줄평 관리</h2>
+            <h2>📝 한줄평 관리</h2>
             <p>날짜를 선택하여 해당 날에 작성된 모든 학생의 한줄평을 확인하고 평가를 남길 수 있습니다.</p>
           </div>
           <div class="card-body" style="padding: 20px 24px;">
