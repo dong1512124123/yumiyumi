@@ -2142,14 +2142,18 @@
         <div class="user-tab-content" id="adminTabContentNotice" role="tabpanel" aria-labelledby="adminTabNotice">
           <div class="card">
             <div class="card-header">
-              <h2>📢 오늘의 공지사항 작성</h2>
-              <p>오늘 하루 학생들에게 전달할 공지사항을 작성하세요. 날짜가 바뀌면 새 공지를 작성할 수 있습니다.</p>
+              <h2>📢 공지사항 작성</h2>
+              <p>날짜를 선택하여 공지사항을 작성하거나 확인하세요.</p>
             </div>
             <div class="card-body">
-              <div class="today-badge" id="adminNoticeDateBadge">
-                <span>📅</span>
-                <span id="adminNoticeDateText">오늘</span>
+              <!-- 날짜 네비게이션 -->
+              <div class="notice-date-nav">
+                <button class="notice-nav-btn" id="btnAdminNoticePrev" type="button" title="이전 날">◀</button>
+                <input type="date" class="notice-date-input" id="adminNoticeDateInput" />
+                <button class="notice-nav-btn" id="btnAdminNoticeNext" type="button" title="다음 날">▶</button>
+                <button class="btn-notice-today" id="btnAdminNoticeToday" type="button">오늘</button>
               </div>
+
               <div class="alert" id="noticeWriteAlert" style="display: none;" role="alert" aria-live="polite">
                 <span class="alert-icon" id="noticeWriteAlertIcon"></span>
                 <span id="noticeWriteAlertMsg"></span>
@@ -2175,8 +2179,8 @@
           <!-- 공지사항 열람자 확인 카드 -->
           <div class="card">
             <div class="card-header">
-              <h2>👀 오늘의 열람자 확인</h2>
-              <p>오늘 공지사항을 확인한 학생 목록입니다.</p>
+              <h2>👀 열람자 확인</h2>
+              <p>선택한 날짜의 공지사항을 확인한 학생 목록입니다.</p>
             </div>
             <div class="card-body" style="padding: 20px 24px;">
               <div id="noticeReaderContainer"></div>
@@ -3241,28 +3245,58 @@
       // 공지사항 UI 렌더링 (관리자 대시보드)
       // =========================================
 
+      /** 관리자 공지사항에서 보고 있는 날짜 */
+      let adminNoticeViewDate = null;
+
       /**
        * 관리자 공지사항 작성 섹션을 초기화합니다.
-       * 오늘 이미 작성된 공지사항이 있으면 내용을 입력창에 채워줍니다.
        */
       function initAdminNoticeSection() {
+        adminNoticeViewDate = getTodayKey();
+        renderAdminNoticeSection();
+      }
+
+      /**
+       * 관리자 공지사항 날짜를 delta일만큼 이동합니다.
+       */
+      function navigateAdminNoticeDate(delta) {
+        const d = new Date(adminNoticeViewDate);
+        d.setDate(d.getDate() + delta);
+        adminNoticeViewDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        renderAdminNoticeSection();
+      }
+
+      /**
+       * 관리자 공지사항 섹션을 현재 선택 날짜 기준으로 렌더링합니다.
+       */
+      function renderAdminNoticeSection() {
+        const dateKey    = adminNoticeViewDate;
         const todayKey   = getTodayKey();
+        const isToday    = dateKey === todayKey;
         const textarea   = document.getElementById('noticeContentInput');
         const saveBtn    = document.getElementById('btnSaveNotice');
         const charCount  = document.getElementById('noticeCharCount');
-        const dateBadge  = document.getElementById('adminNoticeDateText');
+        const dateInput  = document.getElementById('adminNoticeDateInput');
 
-        // 날짜 배지 갱신
-        dateBadge.textContent = formatDateKorean(todayKey);
+        // 날짜 input 동기화
+        dateInput.value = dateKey;
+
+        // "오늘" 버튼 표시/숨김
+        const btnToday = document.getElementById('btnAdminNoticeToday');
+        if (isToday) {
+          btnToday.classList.add('hidden');
+        } else {
+          btnToday.classList.remove('hidden');
+        }
 
         // 기존 공지사항 불러오기
-        const existing = findNoticeByDate(todayKey);
+        const existing = findNoticeByDate(dateKey);
         if (existing) {
-          textarea.value   = existing.content;
+          textarea.value = existing.content;
           saveBtn.textContent = '공지사항 수정';
           updateNoticeCharCount(existing.content.length, charCount);
         } else {
-          textarea.value   = '';
+          textarea.value = '';
           saveBtn.textContent = '공지사항 저장';
           updateNoticeCharCount(0, charCount);
         }
@@ -3270,7 +3304,7 @@
         hideAlert('noticeWriteAlert');
 
         // 열람자 목록 렌더링
-        renderNoticeReaderList(todayKey);
+        renderNoticeReaderList(dateKey);
       }
 
       /**
@@ -3292,7 +3326,7 @@
        * 관리자 공지사항 저장 버튼 클릭을 처리합니다.
        */
       function handleSaveNotice() {
-        const todayKey  = getTodayKey();
+        const dateKey   = adminNoticeViewDate;
         const textarea  = document.getElementById('noticeContentInput');
         const saveBtn   = document.getElementById('btnSaveNotice');
         const content   = textarea.value.trim();
@@ -3304,7 +3338,7 @@
           return;
         }
 
-        const result = upsertNotice(todayKey, content);
+        const result = upsertNotice(dateKey, content);
 
         if (result.isUpdate) {
           showAlert('noticeWriteAlert', 'noticeWriteAlertIcon', 'noticeWriteAlertMsg', 'success', '✅', '공지사항이 수정되었습니다.');
@@ -3312,28 +3346,25 @@
           showAlert('noticeWriteAlert', 'noticeWriteAlertIcon', 'noticeWriteAlertMsg', 'success', '✅', '공지사항이 등록되었습니다!');
         }
 
-        // 버튼 텍스트를 수정 모드로 전환
         saveBtn.textContent = '공지사항 수정';
 
-        // 열람자 목록은 변경 없이 유지 (내용만 수정)
-        renderNoticeReaderList(todayKey);
+        renderNoticeReaderList(dateKey);
       }
 
       /**
-       * 오늘 공지사항의 열람자 목록을 관리자 뷰에 렌더링합니다.
-       * 전체 사용자 수 대비 확인 수도 표시합니다.
-       * @param {string} todayKey - 'YYYY-MM-DD'
+       * 선택된 날짜의 공지사항 열람자 목록을 관리자 뷰에 렌더링합니다.
+       * @param {string} dateKey - 'YYYY-MM-DD'
        */
-      function renderNoticeReaderList(todayKey) {
+      function renderNoticeReaderList(dateKey) {
         const container = document.getElementById('noticeReaderContainer');
-        const notice    = findNoticeByDate(todayKey);
+        const notice    = findNoticeByDate(dateKey);
+        const dateLabel = formatDateKorean(dateKey);
 
         // 공지사항 자체가 없는 경우
         if (!notice) {
           container.innerHTML = `
             <div class="reader-list-empty">
-              오늘 작성된 공지사항이 없습니다.<br/>
-              공지사항을 먼저 작성해주세요.
+              ${escapeHtml(dateLabel)}에 작성된 공지사항이 없습니다.
             </div>
           `;
           return;
@@ -3819,6 +3850,24 @@
         document.getElementById('adminTabUsers').addEventListener('click', () => switchAdminTab('users'));
         document.getElementById('adminTabNotice').addEventListener('click', () => switchAdminTab('notice'));
         document.getElementById('adminTabReview').addEventListener('click', () => switchAdminTab('review'));
+
+        // 관리자 공지사항 날짜 네비게이션
+        document.getElementById('btnAdminNoticePrev').addEventListener('click', () => {
+          navigateAdminNoticeDate(-1);
+        });
+        document.getElementById('btnAdminNoticeNext').addEventListener('click', () => {
+          navigateAdminNoticeDate(1);
+        });
+        document.getElementById('btnAdminNoticeToday').addEventListener('click', () => {
+          adminNoticeViewDate = getTodayKey();
+          renderAdminNoticeSection();
+        });
+        document.getElementById('adminNoticeDateInput').addEventListener('change', (e) => {
+          if (e.target.value) {
+            adminNoticeViewDate = e.target.value;
+            renderAdminNoticeSection();
+          }
+        });
 
         // 공지사항 저장 버튼
         document.getElementById('btnSaveNotice').addEventListener('click', handleSaveNotice);
