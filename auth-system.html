@@ -729,7 +729,7 @@
       }
 
       /* ===========================
-         다이어리 스타일 레이아웃
+         다이어리 스타일 레이아웃 (시간대별 한줄평)
          =========================== */
       .diary-layout {
         border-radius: var(--radius-lg);
@@ -842,165 +842,230 @@
         padding: 0 22px;
       }
 
-      /* 날짜별 줄노트 목록 */
-      .diary-rows {
+      /* ===========================
+         가로 날짜 스트립
+         =========================== */
+      .diary-date-strip-wrap {
+        padding: 10px 0 6px;
+        border-bottom: 1.5px solid var(--color-border);
+        background: #fdf8ff;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #e0cfe8 transparent;
+      }
+
+      .diary-date-strip-wrap::-webkit-scrollbar {
+        height: 4px;
+      }
+      .diary-date-strip-wrap::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .diary-date-strip-wrap::-webkit-scrollbar-thumb {
+        background: #e0cfe8;
+        border-radius: 4px;
+      }
+
+      .diary-date-strip {
+        display: flex;
+        gap: 4px;
+        padding: 0 14px;
+        width: max-content;
+        min-width: 100%;
+      }
+
+      /* 개별 날짜 버튼 */
+      .diary-date-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        width: 36px;
+        min-width: 36px;
+        padding: 5px 0;
+        border-radius: 10px;
+        border: 1.5px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s ease;
+      }
+
+      .diary-date-btn .strip-dow {
+        font-size: 0.6rem;
+        font-weight: 700;
+        color: var(--color-text-muted);
+        letter-spacing: 0.02em;
+      }
+
+      .diary-date-btn .strip-day {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        line-height: 1;
+      }
+
+      /* 토요일 파란색 */
+      .diary-date-btn.is-sat .strip-dow,
+      .diary-date-btn.is-sat .strip-day {
+        color: #4a90d9;
+      }
+
+      /* 일요일 빨간색 */
+      .diary-date-btn.is-sun .strip-dow,
+      .diary-date-btn.is-sun .strip-day {
+        color: #e55050;
+      }
+
+      /* 오늘 날짜 — 보라색(primary) 배경 */
+      .diary-date-btn.is-today-date {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+
+      .diary-date-btn.is-today-date .strip-dow,
+      .diary-date-btn.is-today-date .strip-day {
+        color: #fff;
+      }
+
+      /* 선택된 날짜 (오늘과 구분: 테두리 + 연보라 배경) */
+      .diary-date-btn.is-selected:not(.is-today-date) {
+        background: #ede0ff;
+        border-color: var(--color-primary);
+      }
+
+      .diary-date-btn.is-selected:not(.is-today-date) .strip-dow,
+      .diary-date-btn.is-selected:not(.is-today-date) .strip-day {
+        color: var(--color-primary);
+      }
+
+      .diary-date-btn:not(.is-today-date):not(.is-selected):hover {
+        background: #f5eeff;
+        border-color: var(--color-border);
+      }
+
+      /* ===========================
+         선택 날짜 정보 영역
+         =========================== */
+      .diary-date-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 22px 10px;
+        border-bottom: 1.5px solid var(--color-border);
+        background: #faf5ff;
+      }
+
+      .diary-date-info .info-day-num {
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--color-primary);
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+
+      .diary-date-info .info-right {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .diary-date-info .info-dow {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        line-height: 1.2;
+      }
+
+      .diary-date-info .info-dow.is-sat { color: #4a90d9; }
+      .diary-date-info .info-dow.is-sun { color: #e55050; }
+
+      .diary-date-info .info-lunar {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--color-text-muted);
+        line-height: 1.2;
+      }
+
+      /* ===========================
+         시간대별 행 목록
+         =========================== */
+      .diary-hour-rows {
         display: flex;
         flex-direction: column;
       }
 
-      /* 개별 날짜 행 */
-      .diary-row {
+      /* 개별 시간대 행 */
+      .diary-hour-row {
         display: flex;
         align-items: stretch;
         border-bottom: 1px solid #f0e4fa;
-        min-height: 38px;
+        min-height: 40px;
       }
 
-      .diary-row:last-child {
+      .diary-hour-row:last-child {
         border-bottom: none;
       }
 
-      /* 왼쪽 날짜 칸 */
-      .diary-row .day-cell {
-        width: 42px;
-        min-width: 42px;
+      /* 왼쪽 시간 칸 */
+      .diary-hour-row .hour-cell {
+        width: 46px;
+        min-width: 46px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.78rem;
-        font-weight: 600;
+        font-size: 0.72rem;
+        font-weight: 700;
         color: var(--color-text-muted);
         background: #faf5ff;
         border-right: 1.5px solid #f0e4fa;
         flex-shrink: 0;
         user-select: none;
+        letter-spacing: 0.02em;
       }
 
-      .diary-row.is-today .day-cell {
-        background: var(--color-primary);
-        color: #fff;
-        font-weight: 800;
-        font-size: 0.85rem;
-      }
-
-      .diary-row.is-past .day-cell {
-        color: #d0c4e0;
-      }
-
-      /* 오른쪽 입력/내용 칸 */
-      .diary-row .content-cell {
+      /* 오른쪽 내용 칸 */
+      .diary-hour-row .hour-content-cell {
         flex: 1;
         display: flex;
         align-items: center;
-        padding: 4px 12px;
-        min-height: 38px;
-        position: relative;
+        padding: 5px 12px;
+        min-height: 40px;
+        gap: 8px;
       }
 
-      .diary-row.is-today .content-cell {
+      /* 오늘 선택 시 입력 가능한 행 */
+      .diary-hour-row.is-editable .hour-content-cell {
         background: #f9f2ff;
       }
 
-      /* 코멘트 버튼 */
-      .btn-comment {
-        flex-shrink: 0;
-        margin-left: 6px;
-        position: relative;
-        background: #fffbee;
-        border: 1px solid #f5d98a;
-        border-radius: 8px;
-        padding: 3px 9px;
-        font-size: 0.68rem;
-        font-weight: 700;
-        color: #b08c00;
-        cursor: pointer;
-        font-family: inherit;
-        transition: all 0.15s ease;
-        white-space: nowrap;
-      }
-
-      .btn-comment:hover {
-        background: #fff3cc;
-        border-color: #e8c44a;
-      }
-
-      /* 코멘트 메모지 팝오버 */
-      .comment-popover {
-        position: absolute;
-        bottom: calc(100% + 8px);
-        right: 0;
-        z-index: 100;
-        background: #fffde6;
-        border: 1.5px solid #f5d98a;
-        border-radius: 12px;
-        padding: 10px 14px;
-        min-width: 160px;
-        max-width: 240px;
-        box-shadow: 0 4px 16px rgba(180, 141, 50, 0.18);
-        animation: popIn 0.15s ease;
-        word-break: break-all;
-      }
-
-      .comment-popover::after {
-        content: '';
-        position: absolute;
-        bottom: -7px;
-        right: 16px;
-        transform: rotate(45deg);
-        width: 12px;
-        height: 12px;
-        background: #fffde6;
-        border-right: 1.5px solid #f5d98a;
-        border-bottom: 1.5px solid #f5d98a;
-      }
-
-      @keyframes popIn {
-        from { opacity: 0; transform: translateY(4px) scale(0.95); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-      }
-
-      .comment-popover .popover-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        color: #b08c00;
-        margin-bottom: 4px;
-      }
-
-      .comment-popover .popover-text {
-        font-size: 0.8rem;
-        color: #5a4500;
-        line-height: 1.5;
-      }
-
-      /* 오늘 날짜 행 — 입력 가능 */
-      .diary-row .review-inline-input {
-        width: 100%;
+      /* 인라인 입력 필드 */
+      .diary-hour-row .review-inline-input {
+        flex: 1;
         border: none;
         outline: none;
         background: transparent;
         font-family: inherit;
-        font-size: 0.88rem;
+        font-size: 0.86rem;
         color: var(--color-text-primary);
-        padding: 6px 0;
-        resize: none;
-        line-height: 1.5;
-        overflow: hidden;
+        padding: 4px 0;
+        min-width: 0;
       }
 
-      .diary-row .review-inline-input::placeholder {
+      .diary-hour-row .review-inline-input::placeholder {
         color: var(--color-text-muted);
-        font-size: 0.82rem;
+        font-size: 0.78rem;
       }
 
       /* 저장 버튼 */
-      .diary-row .btn-save-inline {
+      .diary-hour-row .btn-save-inline {
         flex-shrink: 0;
         background: var(--color-primary);
         color: #fff;
         border: none;
         border-radius: 10px;
         padding: 5px 12px;
-        font-size: 0.75rem;
+        font-size: 0.73rem;
         font-weight: 700;
         cursor: pointer;
         font-family: inherit;
@@ -1008,27 +1073,148 @@
         white-space: nowrap;
       }
 
-      .diary-row .btn-save-inline:hover {
+      .diary-hour-row .btn-save-inline:hover {
         background: var(--color-primary-hover);
       }
 
-      /* 이미 작성된 날짜의 내용 표시 */
-      .diary-row .review-text {
-        font-size: 0.85rem;
+      /* 작성된 한줄평 텍스트 */
+      .diary-hour-row .review-text {
+        font-size: 0.84rem;
         color: var(--color-text-primary);
         line-height: 1.5;
         word-break: break-all;
         flex: 1;
       }
 
-      .diary-row.is-past .review-text {
-        color: var(--color-text-secondary);
+      /* 빈 칸 표시 */
+      .diary-hour-row .review-empty {
+        font-size: 0.75rem;
+        color: #e8dcf5;
+        font-style: italic;
+        user-select: none;
       }
 
-      .diary-row .review-empty {
+      /* ===========================
+         하단 한줄평 작성 섹션
+         =========================== */
+      .diary-review-section {
+        border-top: 2px solid var(--color-border);
+        padding: 16px 22px 20px;
+        background: linear-gradient(135deg, #fef9ff 0%, #fdf0f8 100%);
+      }
+
+      .diary-review-section .review-section-title {
         font-size: 0.78rem;
-        color: #e0d4ee;
-        font-style: italic;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: 8px;
+        letter-spacing: 0.03em;
+      }
+
+      .diary-review-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .diary-review-row .review-daily-input {
+        flex: 1;
+        border: 1.5px solid var(--color-border);
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-size: 0.88rem;
+        font-family: inherit;
+        background: #fff;
+        color: var(--color-text-primary);
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .diary-review-row .review-daily-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(180, 141, 232, 0.18);
+      }
+
+      .diary-review-row .review-daily-input::placeholder {
+        color: #d4c6e8;
+        font-size: 0.82rem;
+      }
+
+      /* 코멘트 버튼 */
+      .btn-comment-view {
+        background: #fffbee;
+        border: 1.5px solid #f5c76a;
+        border-radius: 10px;
+        padding: 7px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #a07800;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .btn-comment-view:hover {
+        background: #f5c76a;
+        color: #fff;
+        border-color: #e6b055;
+      }
+
+      .btn-comment-view.no-comment {
+        opacity: 0.4;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      /* 코멘트 메모지 팝오버 */
+      .comment-memo-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 999;
+      }
+
+      .comment-memo {
+        position: absolute;
+        z-index: 1000;
+        width: 220px;
+        padding: 14px 16px;
+        background: #fffde6;
+        border: 1.5px solid #f5c76a;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+        font-family: inherit;
+        animation: memoFadeIn 0.15s ease;
+      }
+
+      @keyframes memoFadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .comment-memo .memo-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #a07800;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .comment-memo .memo-content {
+        font-size: 0.84rem;
+        color: #5a4200;
+        line-height: 1.6;
+        word-break: break-all;
+      }
+
+      .comment-memo .memo-date {
+        font-size: 0.65rem;
+        color: #b89a40;
+        margin-top: 8px;
+        text-align: right;
       }
 
       /* 모바일 반응형 */
@@ -1041,29 +1227,36 @@
           font-size: 1.8rem;
         }
 
-        .diary-row .day-cell {
-          width: 36px;
-          min-width: 36px;
-          font-size: 0.7rem;
+        .diary-date-info {
+          padding: 10px 14px 8px;
+          gap: 10px;
         }
 
-        .diary-row .content-cell {
+        .diary-date-info .info-day-num {
+          font-size: 2.4rem;
+        }
+
+        .diary-date-info .info-dow {
+          font-size: 0.88rem;
+        }
+
+        .diary-hour-row .hour-cell {
+          width: 38px;
+          min-width: 38px;
+          font-size: 0.68rem;
+        }
+
+        .diary-hour-row .hour-content-cell {
           padding: 4px 8px;
         }
 
-        .diary-row .review-inline-input {
-          font-size: 0.82rem;
+        .diary-hour-row .review-inline-input {
+          font-size: 0.8rem;
         }
 
-        .diary-row .btn-save-inline {
+        .diary-hour-row .btn-save-inline {
           padding: 4px 8px;
-          font-size: 0.7rem;
-        }
-
-        .comment-popover {
-          min-width: 130px;
-          max-width: 180px;
-          padding: 8px 10px;
+          font-size: 0.68rem;
         }
       }
 
@@ -1348,6 +1541,19 @@
         box-shadow: 0 2px 6px rgba(180, 141, 232, 0.3);
       }
 
+      /* 관리자 한줄평 목록 — 시간대 뱃지 */
+      .admin-review-hour-badge {
+        background: #fce8f8;
+        color: var(--color-primary);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        border: 1px solid #dcc8f5;
+        white-space: nowrap;
+        margin-left: 6px;
+      }
+
       .admin-review-item-body {
         padding: 12px 14px;
       }
@@ -1543,81 +1749,6 @@
       /* ===========================
          공지사항 카드 (사용자 홈)
          =========================== */
-
-      /* 공지사항 날짜 네비게이션 */
-      .notice-date-nav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
-
-      .notice-date-nav .notice-nav-btn {
-        background: none;
-        border: 1.5px solid var(--color-border);
-        border-radius: 10px;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: var(--color-primary);
-        font-size: 0.85rem;
-        transition: all 0.15s ease;
-        flex-shrink: 0;
-      }
-
-      .notice-date-nav .notice-nav-btn:hover {
-        background: var(--color-primary);
-        color: #fff;
-        border-color: var(--color-primary);
-      }
-
-      .notice-date-nav .notice-date-input {
-        flex: 1;
-        border: 1.5px solid var(--color-border);
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        color: var(--color-primary);
-        font-family: 'Nanum Gothic', sans-serif;
-        text-align: center;
-        background: linear-gradient(135deg, #fdf7ff 0%, #fce8f8 100%);
-        outline: none;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        cursor: pointer;
-      }
-
-      .notice-date-nav .notice-date-input:focus {
-        border-color: var(--color-primary);
-        box-shadow: 0 0 0 3px rgba(180, 141, 232, 0.18);
-      }
-
-      .notice-date-nav .btn-notice-today {
-        background: var(--color-primary-light);
-        border: 1.5px solid var(--color-border);
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: var(--color-primary);
-        cursor: pointer;
-        font-family: inherit;
-        transition: all 0.15s ease;
-        flex-shrink: 0;
-        white-space: nowrap;
-      }
-
-      .notice-date-nav .btn-notice-today:hover {
-        background: var(--color-primary);
-        color: #fff;
-      }
-
-      .notice-date-nav .btn-notice-today.hidden {
-        display: none;
-      }
 
       /* 공지사항 내용 표시 박스 — 파스텔 노란 계열 */
       .notice-content-box {
@@ -1998,7 +2129,7 @@
           <div class="user-navbar-tabs" role="tablist">
             <button class="nav-home" id="btnNavHome" type="button">🏠 우리반</button>
             <button role="tab" id="tabNotice" class="active" aria-selected="true" aria-controls="tabContentNotice">📢 공지사항</button>
-            <button role="tab" id="tabReview" aria-selected="false" aria-controls="tabContentReview">🌈 한줄평</button>
+            <button role="tab" id="tabReview" aria-selected="false" aria-controls="tabContentReview">📅 일정</button>
           </div>
           <!-- 오른쪽: 이름 + 로그아웃 아이콘 -->
           <div class="user-navbar-user">
@@ -2011,26 +2142,43 @@
 
         <!-- 탭 콘텐츠: 공지사항 -->
         <div class="user-tab-content active" id="tabContentNotice" role="tabpanel" aria-labelledby="tabNotice">
-          <div class="card" id="userNoticeCard">
-            <div class="card-header">
-              <h2>📢 공지사항</h2>
-              <p>선생님이 등록한 공지사항을 확인하세요.</p>
-            </div>
-            <div class="card-body">
-              <!-- 날짜 네비게이션 -->
-              <div class="notice-date-nav">
-                <button class="notice-nav-btn" id="btnNoticePrev" type="button" title="이전 날">◀</button>
-                <input type="date" class="notice-date-input" id="noticeDateInput" />
-                <button class="notice-nav-btn" id="btnNoticeNext" type="button" title="다음 날">▶</button>
-                <button class="btn-notice-today" id="btnNoticeToday" type="button">오늘</button>
+          <div class="diary-layout">
+            <!-- 상단: 월/연도 헤더 -->
+            <div class="diary-header">
+              <div class="header-left">
+                <button class="diary-nav-btn" id="btnNoticeMonthPrev" type="button" title="이전 달">◀</button>
+                <span class="month-num" id="noticeMonthNum"></span>
+                <div class="month-detail">
+                  <span class="month-eng" id="noticeMonthEng"></span>
+                  <span class="month-year" id="noticeMonthYear"></span>
+                </div>
+                <button class="diary-nav-btn" id="btnNoticeMonthNext" type="button" title="다음 달">▶</button>
               </div>
-              <!-- 공지사항 내용 (JS에서 동적으로 채움) -->
+              <button class="btn-today" id="btnNoticeToday" type="button">오늘</button>
+            </div>
+
+            <!-- 가로 날짜 스트립 -->
+            <div class="diary-date-strip-wrap">
+              <div class="diary-date-strip" id="noticeDateStrip"></div>
+            </div>
+
+            <!-- 선택된 날짜 정보 -->
+            <div class="diary-date-info" id="noticeDateInfo">
+              <span class="info-day-num" id="noticeInfoDay"></span>
+              <div class="info-right">
+                <span class="info-dow" id="noticeInfoDow"></span>
+                <span class="info-lunar" id="noticeInfoLunar"></span>
+              </div>
+            </div>
+
+            <!-- 공지사항 내용 (JS에서 동적으로 채움) -->
+            <div style="padding: 0 22px 20px;">
               <div id="userNoticeCardBody"></div>
             </div>
           </div>
         </div>
 
-        <!-- 탭 콘텐츠: 오늘의 한줄평 (다이어리 스타일) -->
+        <!-- 탭 콘텐츠: 시간대별 한줄평 (다이어리 스타일) -->
         <div class="user-tab-content" id="tabContentReview" role="tabpanel" aria-labelledby="tabReview">
           <div class="diary-layout">
             <!-- 상단: 월/연도 헤더 + 네비게이션 -->
@@ -2047,6 +2195,20 @@
               <button class="btn-today" id="btnDiaryToday" type="button">오늘</button>
             </div>
 
+            <!-- 가로 날짜 스트립 (JS에서 동적 생성) -->
+            <div class="diary-date-strip-wrap">
+              <div class="diary-date-strip" id="diaryDateStrip"></div>
+            </div>
+
+            <!-- 선택된 날짜 정보 영역 (JS에서 동적 갱신) -->
+            <div class="diary-date-info" id="diaryDateInfo">
+              <span class="info-day-num" id="diaryInfoDay"></span>
+              <div class="info-right">
+                <span class="info-dow" id="diaryInfoDow"></span>
+                <span class="info-lunar" id="diaryInfoLunar"></span>
+              </div>
+            </div>
+
             <!-- 알림 메시지 -->
             <div class="diary-alert-wrap">
               <div class="alert" id="reviewWriteAlert" style="display: none;" role="alert" aria-live="polite">
@@ -2055,8 +2217,11 @@
               </div>
             </div>
 
-            <!-- 날짜별 줄노트 (JS에서 동적 생성) -->
-            <div class="diary-rows" id="diaryRows"></div>
+            <!-- 시간대별 줄노트 (JS에서 동적 생성) -->
+            <div class="diary-hour-rows" id="diaryHourRows"></div>
+
+            <!-- 하단 한줄평 작성 영역 -->
+            <div class="diary-review-section" id="diaryReviewSection"></div>
           </div>
         </div>
       </div>
@@ -2140,20 +2305,36 @@
 
         <!-- 탭 콘텐츠: 공지사항 -->
         <div class="user-tab-content" id="adminTabContentNotice" role="tabpanel" aria-labelledby="adminTabNotice">
-          <div class="card">
-            <div class="card-header">
-              <h2>📢 공지사항 작성</h2>
-              <p>날짜를 선택하여 공지사항을 작성하거나 확인하세요.</p>
-            </div>
-            <div class="card-body">
-              <!-- 날짜 네비게이션 -->
-              <div class="notice-date-nav">
-                <button class="notice-nav-btn" id="btnAdminNoticePrev" type="button" title="이전 날">◀</button>
-                <input type="date" class="notice-date-input" id="adminNoticeDateInput" />
-                <button class="notice-nav-btn" id="btnAdminNoticeNext" type="button" title="다음 날">▶</button>
-                <button class="btn-notice-today" id="btnAdminNoticeToday" type="button">오늘</button>
+          <div class="diary-layout">
+            <!-- 상단: 월/연도 헤더 -->
+            <div class="diary-header">
+              <div class="header-left">
+                <button class="diary-nav-btn" id="btnAdminNoticeMonthPrev" type="button" title="이전 달">◀</button>
+                <span class="month-num" id="adminNoticeMonthNum"></span>
+                <div class="month-detail">
+                  <span class="month-eng" id="adminNoticeMonthEng"></span>
+                  <span class="month-year" id="adminNoticeMonthYear"></span>
+                </div>
+                <button class="diary-nav-btn" id="btnAdminNoticeMonthNext" type="button" title="다음 달">▶</button>
               </div>
+              <button class="btn-today" id="btnAdminNoticeToday" type="button">오늘</button>
+            </div>
 
+            <!-- 가로 날짜 스트립 -->
+            <div class="diary-date-strip-wrap">
+              <div class="diary-date-strip" id="adminNoticeDateStrip"></div>
+            </div>
+
+            <!-- 선택된 날짜 정보 -->
+            <div class="diary-date-info" id="adminNoticeDateInfo">
+              <span class="info-day-num" id="adminNoticeInfoDay"></span>
+              <div class="info-right">
+                <span class="info-dow" id="adminNoticeInfoDow"></span>
+                <span class="info-lunar" id="adminNoticeInfoLunar"></span>
+              </div>
+            </div>
+
+            <div style="padding: 0 22px 20px;">
               <div class="alert" id="noticeWriteAlert" style="display: none;" role="alert" aria-live="polite">
                 <span class="alert-icon" id="noticeWriteAlertIcon"></span>
                 <span id="noticeWriteAlertMsg"></span>
@@ -2173,17 +2354,12 @@
                   공지사항 저장
                 </button>
               </div>
-            </div>
-          </div>
 
-          <!-- 공지사항 열람자 확인 카드 -->
-          <div class="card">
-            <div class="card-header">
-              <h2>👀 열람자 확인</h2>
-              <p>선택한 날짜의 공지사항을 확인한 학생 목록입니다.</p>
-            </div>
-            <div class="card-body" style="padding: 20px 24px;">
-              <div id="noticeReaderContainer"></div>
+              <!-- 공지사항 열람자 확인 -->
+              <div style="margin-top: 20px;">
+                <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--color-primary); margin-bottom: 10px;">👀 열람자 확인</h3>
+                <div id="noticeReaderContainer"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -2626,20 +2802,25 @@
       }
 
       /**
-       * 특정 날짜의 모든 한줄평을 학년 → 반 → 이름 순으로 반환합니다.
+       * 특정 날짜의 모든 한줄평을 학년 → 반 → 이름 → 시간 순으로 반환합니다.
+       * dateKey가 'YYYY-MM-DD' 형식이면 해당 날짜로 시작하는 모든 한줄평을 포함합니다.
+       * (시간대별 저장 형식 'YYYY-MM-DD-HH'도 지원)
        * @param {string} dateKey - 'YYYY-MM-DD'
        * @returns {Array}
        */
       function getReviewsByDate(dateKey) {
         const reviews = loadReviewsFromStorage();
         return reviews
-          .filter((r) => r.dateKey === dateKey)
+          .filter((r) => r.dateKey === dateKey || r.dateKey.startsWith(dateKey + '-'))
           .sort((a, b) => {
             const gradeDiff = Number(a.userGrade) - Number(b.userGrade);
             if (gradeDiff !== 0) return gradeDiff;
             const classDiff = Number(a.userClass) - Number(b.userClass);
             if (classDiff !== 0) return classDiff;
-            return a.userName.localeCompare(b.userName);
+            const nameDiff = a.userName.localeCompare(b.userName);
+            if (nameDiff !== 0) return nameDiff;
+            // 같은 사용자 내에서 시간대 오름차순
+            return a.dateKey.localeCompare(b.dateKey);
           });
       }
 
@@ -2707,6 +2888,11 @@
         iconEl.textContent  = icon;
         msgEl.textContent   = message;
         alertEl.style.display = 'flex';
+        // 3초 후 자동 숨김
+        clearTimeout(alertEl._hideTimer);
+        alertEl._hideTimer = setTimeout(() => {
+          alertEl.style.display = 'none';
+        }, 3000);
       }
 
       /**
@@ -2881,25 +3067,32 @@
        * 프로필 정보, 한줄평 작성 영역, 내 한줄평 목록을 모두 갱신합니다.
        * @param {{ id: string, grade: string, classNum: string, name: string }} user
        */
-      /** 현재 다이어리에서 보고 있는 연/월 */
-      let diaryViewYear = null;
+      /** 현재 다이어리에서 보고 있는 연/월/일 */
+      let diaryViewYear  = null;
       let diaryViewMonth = null; // 0-indexed
+      let diaryViewDay   = null; // 1-indexed, 선택된 날짜
 
-      /** 현재 공지사항에서 보고 있는 날짜 (YYYY-MM-DD) */
-      let noticeViewDate = null;
+      /** 현재 공지사항에서 보고 있는 연/월/일 */
+      let noticeViewYear  = null;
+      let noticeViewMonth = null; // 0-indexed
+      let noticeViewDay   = null; // 1-indexed
 
       function renderUserHome(user) {
         // 상단 바 사용자 이름 표시
         document.getElementById('navbarUserName').textContent = user.name;
 
         // 공지사항 날짜를 오늘로 초기화
-        noticeViewDate = getTodayKey();
+        const nowN = new Date();
+        noticeViewYear  = nowN.getFullYear();
+        noticeViewMonth = nowN.getMonth();
+        noticeViewDay   = nowN.getDate();
         renderUserNoticeCard(user);
 
-        // 다이어리 한줄평 렌더링 (현재 월로 초기화)
+        // 다이어리 한줄평 렌더링 (오늘로 초기화)
         const now = new Date();
-        diaryViewYear = now.getFullYear();
+        diaryViewYear  = now.getFullYear();
         diaryViewMonth = now.getMonth();
+        diaryViewDay   = now.getDate();
         renderDiaryView(user);
 
         // 탭을 공지사항(기본)으로 초기화
@@ -2918,40 +3111,108 @@
           diaryViewMonth = 0;
           diaryViewYear++;
         }
+        // 월이 바뀌면 해당 월의 1일을 기본 선택
+        diaryViewDay = 1;
         renderDiaryView(user);
       }
 
       /**
-       * 다이어리 오늘 월로 복귀
+       * 다이어리 오늘 날짜로 복귀
        */
       function navigateDiaryToday(user) {
         const now = new Date();
-        diaryViewYear = now.getFullYear();
+        diaryViewYear  = now.getFullYear();
         diaryViewMonth = now.getMonth();
+        diaryViewDay   = now.getDate();
         renderDiaryView(user);
       }
 
+      // =========================================
+      // 음력 근사 변환 (2024~2026년 범위)
+      // =========================================
+
+      /**
+       * 양력 날짜를 음력 날짜로 근사 변환합니다.
+       * 완전한 정확도보다 실용적인 근사치를 제공합니다.
+       * 2024~2026년 범위를 커버하는 룩업 테이블 기반 방식입니다.
+       * @param {number} year - 양력 연도
+       * @param {number} month - 양력 월 (1-indexed)
+       * @param {number} day - 양력 일
+       * @returns {string} 음력 표시 문자열 (예: "음력 1월 15일")
+       */
+      function solarToLunar(year, month, day) {
+        // 각 연도별 음력 1월 1일의 양력 날짜 (기준점)
+        const lunarNewYearDates = {
+          2024: new Date(2024, 1, 10),
+          2025: new Date(2025, 0, 29),
+          2026: new Date(2026, 1, 17),
+          2027: new Date(2027, 1, 6),
+        };
+
+        // 각 연도의 음력 월별 일수
+        const lunarMonthDays = {
+          2024: [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30],
+          2025: [30, 29, 30, 29, 30, 29, 30, 30, 29, 30, 29, 30],
+          2026: [29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 30, 29],
+        };
+
+        const target = new Date(year, month - 1, day);
+
+        // 해당 날짜에 맞는 음력 기준 연도 찾기
+        // 그 해 설날보다 앞이면 전년도 기준 사용
+        const availableYears = [2024, 2025, 2026];
+        let baseYear = null;
+        for (let i = availableYears.length - 1; i >= 0; i--) {
+          const y = availableYears[i];
+          if (lunarNewYearDates[y] && target >= lunarNewYearDates[y]) {
+            baseYear = y;
+            break;
+          }
+        }
+
+        if (!baseYear) return '';
+
+        const baseDate = lunarNewYearDates[baseYear];
+        let diffDays = Math.round((target - baseDate) / (1000 * 60 * 60 * 24));
+        const monthDays = lunarMonthDays[baseYear];
+        if (!monthDays) return '';
+
+        let monthIdx = 0;
+        while (monthIdx < monthDays.length && diffDays >= monthDays[monthIdx]) {
+          diffDays -= monthDays[monthIdx];
+          monthIdx++;
+        }
+
+        if (monthIdx >= monthDays.length) return '';
+
+        const lunarMonth = monthIdx + 1;
+        const lunarDay = diffDays + 1;
+
+        return `음력 ${lunarMonth}월 ${lunarDay}일`;
+      }
+
+      // =========================================
+      // 다이어리 뷰 렌더링
+      // =========================================
+
       /**
        * 다이어리 뷰 전체를 렌더링합니다.
-       * 상단 월/연도 헤더 + 날짜별 줄노트 행을 생성합니다.
+       * 상단 헤더 + 날짜 스트립 + 날짜 정보 + 시간대별 행을 생성합니다.
+       * @param {{ id: string, grade: string, classNum: string, name: string }} user
        */
       function renderDiaryView(user) {
         const now = new Date();
-        const realYear = now.getFullYear();
+        const realYear  = now.getFullYear();
         const realMonth = now.getMonth();
-        const realDay = now.getDate();
+        const realDay   = now.getDate();
 
-        const year = diaryViewYear;
+        const year  = diaryViewYear;
         const month = diaryViewMonth;
+        const day   = diaryViewDay;
         const isCurrentMonth = (year === realYear && month === realMonth);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        const monthEngNames = [
-          'January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-
-        // 헤더 설정
+        // ─── 상단 헤더 설정 ───
         document.getElementById('diaryMonthNum').textContent = month + 1;
         document.getElementById('diaryMonthEng').textContent = monthEngNames[month];
         document.getElementById('diaryMonthYear').textContent = year;
@@ -2964,144 +3225,278 @@
           btnToday.classList.remove('hidden');
         }
 
-        // 날짜별 행 생성
-        const container = document.getElementById('diaryRows');
-        const reviews = getReviewsByUser(user.id);
-        const reviewMap = {};
-        reviews.forEach(r => { reviewMap[r.dateKey] = r; });
+        // ─── 날짜 스트립 렌더링 ───
+        renderDiaryDateStrip(user, year, month, day, daysInMonth, realYear, realMonth, realDay);
 
-        let rowsHtml = '';
+        // ─── 날짜 정보 영역 렌더링 ───
+        renderDiaryDateInfo(year, month, day);
+
+        // ─── 시간대별 행 렌더링 ───
+        renderDiaryHourRows(user, year, month, day, isCurrentMonth, realYear, realMonth, realDay);
+
+        // ─── 하단 한줄평 섹션 렌더링 ───
+        renderDiaryReviewSection(user, year, month, day);
+      }
+
+      /**
+       * 가로 날짜 스트립을 렌더링합니다.
+       * 각 날짜 버튼 클릭 시 해당 날짜를 선택하고 시간대 행을 갱신합니다.
+       */
+      function renderDiaryDateStrip(user, year, month, selectedDay, daysInMonth, realYear, realMonth, realDay) {
+        const dowKor = ['일', '월', '화', '수', '목', '금', '토'];
+        const strip  = document.getElementById('diaryDateStrip');
+        strip.innerHTML = '';
+
         for (let d = 1; d <= daysInMonth; d++) {
-          const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          const isToday = isCurrentMonth && d === realDay;
-          const isPast = (year < realYear) || (year === realYear && month < realMonth) || (isCurrentMonth && d < realDay);
-          const review = reviewMap[dateKey];
+          const dateObj = new Date(year, month, d);
+          const dow     = dateObj.getDay(); // 0=일, 6=토
+          const isToday = (year === realYear && month === realMonth && d === realDay);
+          const isSel   = d === selectedDay;
 
-          let rowClass = 'diary-row';
-          if (isToday) rowClass += ' is-today';
-          else if (isPast) rowClass += ' is-past';
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'diary-date-btn';
+          if (dow === 0) btn.classList.add('is-sun');
+          if (dow === 6) btn.classList.add('is-sat');
+          if (isToday)  btn.classList.add('is-today-date');
+          if (isSel)    btn.classList.add('is-selected');
 
-          let contentHtml = '';
-          if (isToday) {
-            const existingContent = review ? escapeHtml(review.content) : '';
-            const todayCommentBtn = (review && review.adminComment)
-              ? `<button class="btn-comment" type="button" data-comment="${escapeHtml(review.adminComment)}">💬 코멘트</button>`
-              : '';
-            contentHtml = `
-              <input
-                type="text"
-                class="review-inline-input"
-                id="diaryInput-${d}"
-                placeholder="오늘 하루를 한 줄로 남겨보세요 ✏️"
-                maxlength="100"
-                value="${existingContent}"
-              />
-              <button class="btn-save-inline" id="diarySave-${d}" type="button">
-                ${review ? '수정' : '등록'}
-              </button>
-              ${todayCommentBtn}
-            `;
-          } else if (review) {
-            const commentBtn = review.adminComment
-              ? `<button class="btn-comment" type="button" data-comment="${escapeHtml(review.adminComment)}">💬 코멘트</button>`
-              : '';
-            contentHtml = `<span class="review-text">${escapeHtml(review.content)}</span>${commentBtn}`;
-          } else if (isPast) {
-            contentHtml = `<span class="review-empty">—</span>`;
-          } else {
-            contentHtml = '';
-          }
-
-          rowsHtml += `
-            <div class="${rowClass}" data-date="${dateKey}">
-              <div class="day-cell">${d}</div>
-              <div class="content-cell">${contentHtml}</div>
-            </div>
+          btn.setAttribute('aria-label', `${month + 1}월 ${d}일 ${dowKor[dow]}요일`);
+          btn.setAttribute('data-day', d);
+          btn.innerHTML = `
+            <span class="strip-dow">${dowKor[dow]}</span>
+            <span class="strip-day">${d}</span>
           `;
-        }
-        container.innerHTML = rowsHtml;
 
-        // 오늘 행 이벤트 바인딩 (현재 월일 때만)
-        if (isCurrentMonth) {
-          const todayDateKey = getTodayKey();
-          const saveBtn = document.getElementById(`diarySave-${realDay}`);
-          const input = document.getElementById(`diaryInput-${realDay}`);
-          if (saveBtn && input) {
-            saveBtn.addEventListener('click', () => handleDiaryInlineSave(user, todayDateKey, realDay));
-            input.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleDiaryInlineSave(user, todayDateKey, realDay);
-              }
-            });
-          }
-
-          // 오늘 행으로 스크롤
-          requestAnimationFrame(() => {
-            const todayRow = container.querySelector('.diary-row.is-today');
-            if (todayRow) {
-              todayRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            }
+          btn.addEventListener('click', () => {
+            diaryViewDay = d;
+            // 선택 스타일 갱신
+            strip.querySelectorAll('.diary-date-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            // 날짜 정보 갱신
+            renderDiaryDateInfo(year, month, d);
+            // 시간대 행 갱신
+            const isCurMonth = (year === realYear && month === realMonth);
+            renderDiaryHourRows(user, year, month, d, isCurMonth, realYear, realMonth, realDay);
+            // 한줄평 섹션 갱신
+            renderDiaryReviewSection(user, year, month, d);
           });
+
+          strip.appendChild(btn);
         }
 
-        // 코멘트 버튼 이벤트 위임
-        container.addEventListener('click', (e) => {
-          const btn = e.target.closest('.btn-comment');
-          if (!btn) return;
-          e.stopPropagation();
-
-          // 기존 팝오버 닫기
-          closeCommentPopover();
-
-          const comment = btn.getAttribute('data-comment');
-
-          const popover = document.createElement('div');
-          popover.className = 'comment-popover';
-          popover.innerHTML = `
-            <div class="popover-label">선생님 코멘트</div>
-            <div class="popover-text">${escapeHtml(comment)}</div>
-          `;
-          btn.appendChild(popover);
+        // 선택된 날짜 버튼이 보이도록 스크롤
+        requestAnimationFrame(() => {
+          const selBtn = strip.querySelector('.is-selected');
+          if (selBtn) {
+            selBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+          }
         });
       }
 
-      /** 열려있는 코멘트 팝오버를 닫습니다 */
-      function closeCommentPopover() {
-        const existing = document.querySelector('.comment-popover');
-        if (existing) existing.remove();
+      /**
+       * 선택된 날짜의 요일·음력 정보 영역을 갱신합니다.
+       */
+      function renderDiaryDateInfo(year, month, day) {
+        const dowKorFull = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dateObj = new Date(year, month, day);
+        const dow     = dateObj.getDay();
+
+        const infoDay   = document.getElementById('diaryInfoDay');
+        const infoDow   = document.getElementById('diaryInfoDow');
+        const infoLunar = document.getElementById('diaryInfoLunar');
+
+        infoDay.textContent = day;
+
+        infoDow.textContent = dowKorFull[dow];
+        infoDow.className   = 'info-dow';
+        if (dow === 0) infoDow.classList.add('is-sun');
+        if (dow === 6) infoDow.classList.add('is-sat');
+
+        infoLunar.textContent = solarToLunar(year, month + 1, day);
       }
 
-      // 외부 클릭 시 팝오버 닫기
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.comment-popover') && !e.target.closest('.btn-comment')) {
-          closeCommentPopover();
+      /**
+       * 시간대별 행(9시~24시)을 렌더링합니다.
+       * 모든 날짜에서 인라인 입력 가능
+       */
+      function renderDiaryHourRows(user, year, month, day, isCurrentMonth, realYear, realMonth, realDay) {
+        const container = document.getElementById('diaryHourRows');
+
+        // dateKey = 'YYYY-MM-DD' (날짜 부분)
+        const baseDateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        // 해당 날짜의 시간대별 한줄평을 reviewMap으로 로드
+        const reviews = getReviewsByUser(user.id);
+        const hourReviewMap = {};
+        reviews.forEach(r => {
+          if (r.dateKey.startsWith(baseDateKey + '-')) {
+            const hourPart = r.dateKey.slice(baseDateKey.length + 1);
+            hourReviewMap[hourPart] = r;
+          }
+        });
+
+        const startHour = 9;
+        const endHour   = 24;
+        let html = '';
+
+        for (let h = startHour; h <= endHour; h++) {
+          const hourStr   = String(h).padStart(2, '0');
+          const hourKey   = baseDateKey + '-' + hourStr;
+          const review    = hourReviewMap[hourStr] || null;
+          const existingVal = review ? escapeHtml(review.content) : '';
+
+          html += `
+            <div class="diary-hour-row is-editable" data-hour="${hourStr}">
+              <div class="hour-cell">${hourStr}</div>
+              <div class="hour-content-cell">
+                <input
+                  type="text"
+                  class="review-inline-input"
+                  id="diaryInput-${hourStr}"
+                  maxlength="100"
+                  value="${existingVal}"
+                />
+              </div>
+            </div>
+          `;
         }
-      });
+
+        container.innerHTML = html;
+
+        // 모든 날짜에서 Enter 키 이벤트 바인딩
+        for (let h = startHour; h <= endHour; h++) {
+          const hourStr = String(h).padStart(2, '0');
+          const hourKey = baseDateKey + '-' + hourStr;
+          const input = document.getElementById(`diaryInput-${hourStr}`);
+          if (input) {
+            input.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleDiaryHourSave(user, hourKey, hourStr, baseDateKey);
+              }
+            });
+          }
+        }
+      }
 
       /**
-       * 다이어리 인라인 저장 핸들러
+       * 특정 시간대 한줄평 저장 핸들러
+       * dateKey = 'YYYY-MM-DD-HH' 형식으로 저장합니다.
+       * @param {{ id: string, name: string, grade: string, classNum: string }} user
+       * @param {string} hourKey  - 'YYYY-MM-DD-HH' (저장용 dateKey)
+       * @param {string} hourStr  - 'HH' (DOM ID 접미사)
+       * @param {string} baseDateKey - 'YYYY-MM-DD' (시간대 행 재렌더링용)
        */
-      function handleDiaryInlineSave(user, dateKey, day) {
-        const input = document.getElementById(`diaryInput-${day}`);
-        const saveBtn = document.getElementById(`diarySave-${day}`);
+      function handleDiaryHourSave(user, hourKey, hourStr, baseDateKey) {
+        const input = document.getElementById(`diaryInput-${hourStr}`);
         if (!input) return;
 
         const content = input.value.trim();
-        if (!content) {
-          shakeElement(input);
-          showAlert('reviewWriteAlert', 'reviewWriteAlertIcon', 'reviewWriteAlertMsg', 'error', '⚠️', '한줄평 내용을 입력해주세요.');
-          input.focus();
-          return;
-        }
+        if (!content) return;
 
         const result = upsertReview({
-          userId: user.id,
-          userName: user.name,
+          userId:    user.id,
+          userName:  user.name,
           userGrade: user.grade,
           userClass: user.classNum,
-          dateKey: dateKey,
-          content: content,
+          dateKey:   hourKey,
+          content:   content,
+        });
+
+        if (result.isUpdate) {
+          showAlert('reviewWriteAlert', 'reviewWriteAlertIcon', 'reviewWriteAlertMsg', 'success', '✅', '수정되었습니다.');
+        } else {
+          showAlert('reviewWriteAlert', 'reviewWriteAlertIcon', 'reviewWriteAlertMsg', 'success', '✅', '등록되었습니다!');
+        }
+      }
+
+      /**
+       * 하단 한줄평 섹션을 렌더링합니다.
+       * dateKey: 'YYYY-MM-DD' (일별 한줄평)
+       */
+      function renderDiaryReviewSection(user, year, month, day) {
+        const container = document.getElementById('diaryReviewSection');
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const todayKey = getTodayKey();
+        const isToday = dateKey === todayKey;
+        const review = findReview(user.id, dateKey);
+        const existingVal = review ? escapeHtml(review.content) : '';
+        const hasComment = review && review.adminComment;
+
+        let commentBtnHtml = '';
+        if (hasComment) {
+          commentBtnHtml = `<button class="btn-comment-view" id="btnViewComment" type="button">💬 코멘트</button>`;
+        } else {
+          commentBtnHtml = `<button class="btn-comment-view no-comment" type="button">💬 코멘트</button>`;
+        }
+
+        if (isToday) {
+          // 오늘: 입력 가능
+          container.innerHTML = `
+            <div class="review-section-title">✏️ 오늘의 한줄평</div>
+            <div class="diary-review-row">
+              <input
+                type="text"
+                class="review-daily-input"
+                id="diaryReviewInput"
+                maxlength="100"
+                placeholder="오늘 하루를 한 줄로 남겨보세요"
+                value="${existingVal}"
+              />
+              ${commentBtnHtml}
+            </div>
+          `;
+
+          // Enter 키로 저장
+          const input = document.getElementById('diaryReviewInput');
+          if (input) {
+            input.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleDailyReviewSave(user, dateKey, year, month, day);
+              }
+            });
+          }
+        } else {
+          // 다른 날: 읽기 전용
+          const displayText = existingVal || '<span style="color:#d4c6e8; font-style:italic;">작성된 한줄평이 없습니다.</span>';
+          container.innerHTML = `
+            <div class="review-section-title">✏️ 한줄평</div>
+            <div class="diary-review-row">
+              <div class="review-daily-input" style="background:#f9f5ff; color:var(--color-text-primary); cursor:default;">${review ? escapeHtml(review.content) : '<span style="color:#d4c6e8; font-style:italic;">작성된 한줄평이 없습니다.</span>'}</div>
+              ${commentBtnHtml}
+            </div>
+          `;
+        }
+
+        // 코멘트 버튼 이벤트
+        if (hasComment) {
+          const btnComment = document.getElementById('btnViewComment');
+          btnComment.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showCommentMemo(btnComment, review.adminComment, review.commentedAt);
+          });
+        }
+      }
+
+      /**
+       * 일별 한줄평 저장 핸들러
+       */
+      function handleDailyReviewSave(user, dateKey, year, month, day) {
+        const input = document.getElementById('diaryReviewInput');
+        if (!input) return;
+
+        const content = input.value.trim();
+        if (!content) return;
+
+        const result = upsertReview({
+          userId:    user.id,
+          userName:  user.name,
+          userGrade: user.grade,
+          userClass: user.classNum,
+          dateKey:   dateKey,
+          content:   content,
         });
 
         if (result.isUpdate) {
@@ -3110,8 +3505,64 @@
           showAlert('reviewWriteAlert', 'reviewWriteAlertIcon', 'reviewWriteAlertMsg', 'success', '✅', '한줄평이 등록되었습니다!');
         }
 
-        // 버튼 텍스트 변경
-        if (saveBtn) saveBtn.textContent = '수정';
+        // 코멘트 버튼 갱신
+        renderDiaryReviewSection(user, year, month, day);
+      }
+
+      /**
+       * 코멘트 메모지 팝오버를 표시합니다.
+       */
+      function showCommentMemo(anchorEl, comment, commentedAt) {
+        // 기존 메모지 제거
+        closeCommentMemo();
+
+        const rect = anchorEl.getBoundingClientRect();
+
+        // 오버레이 (클릭 시 닫기)
+        const overlay = document.createElement('div');
+        overlay.className = 'comment-memo-overlay';
+        overlay.addEventListener('click', closeCommentMemo);
+
+        // 메모지
+        const memo = document.createElement('div');
+        memo.className = 'comment-memo';
+
+        // 날짜 포맷
+        let dateStr = '';
+        if (commentedAt) {
+          const d = new Date(commentedAt);
+          dateStr = `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
+        }
+
+        memo.innerHTML = `
+          <div class="memo-label">📝 선생님 코멘트</div>
+          <div class="memo-content">${escapeHtml(comment)}</div>
+          ${dateStr ? `<div class="memo-date">${dateStr}</div>` : ''}
+        `;
+
+        // 위치 계산 (버튼 위에 표시)
+        memo.style.top = (rect.top - 10) + 'px';
+        memo.style.right = (window.innerWidth - rect.right) + 'px';
+        memo.style.transform = 'translateY(-100%)';
+
+        document.body.appendChild(overlay);
+        document.body.appendChild(memo);
+
+        // 화면 밖으로 나가면 아래로 표시
+        requestAnimationFrame(() => {
+          const memoRect = memo.getBoundingClientRect();
+          if (memoRect.top < 10) {
+            memo.style.top = (rect.bottom + 10) + 'px';
+            memo.style.transform = 'none';
+          }
+        });
+      }
+
+      /**
+       * 코멘트 메모지를 닫습니다.
+       */
+      function closeCommentMemo() {
+        document.querySelectorAll('.comment-memo-overlay, .comment-memo').forEach(el => el.remove());
       }
 
       /**
@@ -3142,36 +3593,134 @@
       }
 
       // =========================================
-      // 공지사항 UI 렌더링 (사용자 홈)
+      // 공지사항 UI 렌더링 (사용자 홈) — 다이어리 스타일
       // =========================================
 
+      const monthEngNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
       /**
-       * 사용자 홈의 공지사항 카드를 렌더링합니다.
-       * noticeViewDate 상태 변수 기준으로 해당 날짜의 공지사항을 표시합니다.
-       * @param {{ id: string, name: string, grade: string, classNum: string }} user
+       * 사용자 공지사항 전체 뷰를 렌더링합니다.
        */
       function renderUserNoticeCard(user) {
-        const dateKey  = noticeViewDate;
-        const todayKey = getTodayKey();
-        const isToday  = dateKey === todayKey;
+        const now = new Date();
+        const realYear  = now.getFullYear();
+        const realMonth = now.getMonth();
+        const realDay   = now.getDate();
 
-        // 날짜 input 동기화
-        const dateInput = document.getElementById('noticeDateInput');
-        dateInput.value = dateKey;
+        const year  = noticeViewYear;
+        const month = noticeViewMonth;
+        const day   = noticeViewDay;
+        const isCurrentMonth = (year === realYear && month === realMonth);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        // "오늘" 버튼 표시/숨김
+        // 헤더 설정
+        document.getElementById('noticeMonthNum').textContent = month + 1;
+        document.getElementById('noticeMonthEng').textContent = monthEngNames[month];
+        document.getElementById('noticeMonthYear').textContent = year;
+
+        // "오늘" 버튼
         const btnToday = document.getElementById('btnNoticeToday');
-        if (isToday) {
+        if (isCurrentMonth && day === realDay) {
           btnToday.classList.add('hidden');
         } else {
           btnToday.classList.remove('hidden');
         }
 
+        // 날짜 스트립
+        renderNoticeDateStrip(user, year, month, day, daysInMonth, realYear, realMonth, realDay);
+
+        // 날짜 정보
+        renderNoticeDateInfo(year, month, day);
+
+        // 공지사항 내용
+        renderNoticeContent(user, year, month, day, realYear, realMonth, realDay);
+      }
+
+      /**
+       * 사용자 공지사항 날짜 스트립을 렌더링합니다.
+       */
+      function renderNoticeDateStrip(user, year, month, selectedDay, daysInMonth, realYear, realMonth, realDay) {
+        const dowKor = ['일', '월', '화', '수', '목', '금', '토'];
+        const strip  = document.getElementById('noticeDateStrip');
+        strip.innerHTML = '';
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateObj = new Date(year, month, d);
+          const dow     = dateObj.getDay();
+          const isToday = (year === realYear && month === realMonth && d === realDay);
+          const isSel   = d === selectedDay;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'diary-date-btn';
+          if (dow === 0) btn.classList.add('is-sun');
+          if (dow === 6) btn.classList.add('is-sat');
+          if (isToday)  btn.classList.add('is-today-date');
+          if (isSel)    btn.classList.add('is-selected');
+
+          btn.innerHTML = `
+            <span class="strip-dow">${dowKor[dow]}</span>
+            <span class="strip-day">${d}</span>
+          `;
+
+          btn.addEventListener('click', () => {
+            noticeViewDay = d;
+            strip.querySelectorAll('.diary-date-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            renderNoticeDateInfo(year, month, d);
+            renderNoticeContent(user, year, month, d, realYear, realMonth, realDay);
+            // "오늘" 버튼 갱신
+            const btnT = document.getElementById('btnNoticeToday');
+            if (year === realYear && month === realMonth && d === realDay) {
+              btnT.classList.add('hidden');
+            } else {
+              btnT.classList.remove('hidden');
+            }
+          });
+
+          strip.appendChild(btn);
+        }
+
+        requestAnimationFrame(() => {
+          const selBtn = strip.querySelector('.is-selected');
+          if (selBtn) selBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        });
+      }
+
+      /**
+       * 사용자 공지사항 날짜 정보 영역을 갱신합니다.
+       */
+      function renderNoticeDateInfo(year, month, day) {
+        const dowKorFull = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dateObj = new Date(year, month, day);
+        const dow = dateObj.getDay();
+
+        document.getElementById('noticeInfoDay').textContent = day;
+
+        const infoDow = document.getElementById('noticeInfoDow');
+        infoDow.textContent = dowKorFull[dow];
+        infoDow.className = 'info-dow';
+        if (dow === 0) infoDow.classList.add('is-sun');
+        if (dow === 6) infoDow.classList.add('is-sat');
+
+        document.getElementById('noticeInfoLunar').textContent = solarToLunar(year, month + 1, day);
+      }
+
+      /**
+       * 선택된 날짜의 공지사항 내용을 렌더링합니다.
+       */
+      function renderNoticeContent(user, year, month, day, realYear, realMonth, realDay) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const todayKey = getTodayKey();
+        const isToday = dateKey === todayKey;
+
         const cardBody = document.getElementById('userNoticeCardBody');
-        const notice   = findNoticeByDate(dateKey);
+        const notice = findNoticeByDate(dateKey);
         const dateLabel = formatDateKorean(dateKey);
 
-        // 공지사항이 없는 경우
         if (!notice) {
           cardBody.innerHTML = `
             <div class="notice-empty">
@@ -3182,25 +3731,12 @@
           return;
         }
 
-        // 확인 버튼은 오늘 날짜의 공지사항만
         let confirmButtonHtml = '';
         if (isToday) {
           const alreadyRead = hasReadNotice(dateKey, user.id);
           confirmButtonHtml = alreadyRead
-            ? `
-              <div class="notice-read-badge" aria-label="공지사항 확인 완료">
-                ✅ 확인 완료
-              </div>
-            `
-            : `
-              <button
-                class="btn btn--success btn--full"
-                id="btnConfirmNotice"
-                type="button"
-              >
-                ✔ 확인했습니다
-              </button>
-            `;
+            ? `<div class="notice-read-badge" aria-label="공지사항 확인 완료">✅ 확인 완료</div>`
+            : `<button class="btn btn--success btn--full" id="btnConfirmNotice" type="button">✔ 확인했습니다</button>`;
         }
 
         cardBody.innerHTML = `
@@ -3208,24 +3744,38 @@
           ${confirmButtonHtml}
         `;
 
-        // 오늘 공지사항 확인 버튼 이벤트
         if (isToday && !hasReadNotice(dateKey, user.id)) {
           const confirmBtn = document.getElementById('btnConfirmNotice');
           if (confirmBtn) {
-            confirmBtn.addEventListener('click', () => {
-              handleConfirmNotice(user, dateKey);
-            });
+            confirmBtn.addEventListener('click', () => handleConfirmNotice(user, dateKey));
           }
         }
       }
 
       /**
-       * 공지사항 날짜를 delta일만큼 이동합니다.
+       * 사용자 공지사항 월 이동
        */
-      function navigateNoticeDate(user, delta) {
-        const d = new Date(noticeViewDate);
-        d.setDate(d.getDate() + delta);
-        noticeViewDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      function navigateNoticeMonth(user, delta) {
+        noticeViewMonth += delta;
+        if (noticeViewMonth < 0) {
+          noticeViewMonth = 11;
+          noticeViewYear--;
+        } else if (noticeViewMonth > 11) {
+          noticeViewMonth = 0;
+          noticeViewYear++;
+        }
+        noticeViewDay = 1;
+        renderUserNoticeCard(user);
+      }
+
+      /**
+       * 사용자 공지사항 오늘로 이동
+       */
+      function navigateNoticeToday(user) {
+        const now = new Date();
+        noticeViewYear  = now.getFullYear();
+        noticeViewMonth = now.getMonth();
+        noticeViewDay   = now.getDate();
         renderUserNoticeCard(user);
       }
 
@@ -3242,27 +3792,49 @@
       }
 
       // =========================================
-      // 공지사항 UI 렌더링 (관리자 대시보드)
+      // 공지사항 UI 렌더링 (관리자 대시보드) — 다이어리 스타일
       // =========================================
 
-      /** 관리자 공지사항에서 보고 있는 날짜 */
-      let adminNoticeViewDate = null;
+      /** 관리자 공지사항에서 보고 있는 연/월/일 */
+      let adminNoticeViewYear  = null;
+      let adminNoticeViewMonth = null;
+      let adminNoticeViewDay   = null;
 
       /**
        * 관리자 공지사항 작성 섹션을 초기화합니다.
        */
       function initAdminNoticeSection() {
-        adminNoticeViewDate = getTodayKey();
+        const now = new Date();
+        adminNoticeViewYear  = now.getFullYear();
+        adminNoticeViewMonth = now.getMonth();
+        adminNoticeViewDay   = now.getDate();
         renderAdminNoticeSection();
       }
 
       /**
-       * 관리자 공지사항 날짜를 delta일만큼 이동합니다.
+       * 관리자 공지사항 월 이동
        */
-      function navigateAdminNoticeDate(delta) {
-        const d = new Date(adminNoticeViewDate);
-        d.setDate(d.getDate() + delta);
-        adminNoticeViewDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      function navigateAdminNoticeMonth(delta) {
+        adminNoticeViewMonth += delta;
+        if (adminNoticeViewMonth < 0) {
+          adminNoticeViewMonth = 11;
+          adminNoticeViewYear--;
+        } else if (adminNoticeViewMonth > 11) {
+          adminNoticeViewMonth = 0;
+          adminNoticeViewYear++;
+        }
+        adminNoticeViewDay = 1;
+        renderAdminNoticeSection();
+      }
+
+      /**
+       * 관리자 공지사항 오늘로 이동
+       */
+      function navigateAdminNoticeToday() {
+        const now = new Date();
+        adminNoticeViewYear  = now.getFullYear();
+        adminNoticeViewMonth = now.getMonth();
+        adminNoticeViewDay   = now.getDate();
         renderAdminNoticeSection();
       }
 
@@ -3270,26 +3842,42 @@
        * 관리자 공지사항 섹션을 현재 선택 날짜 기준으로 렌더링합니다.
        */
       function renderAdminNoticeSection() {
-        const dateKey    = adminNoticeViewDate;
-        const todayKey   = getTodayKey();
-        const isToday    = dateKey === todayKey;
-        const textarea   = document.getElementById('noticeContentInput');
-        const saveBtn    = document.getElementById('btnSaveNotice');
-        const charCount  = document.getElementById('noticeCharCount');
-        const dateInput  = document.getElementById('adminNoticeDateInput');
+        const now = new Date();
+        const realYear  = now.getFullYear();
+        const realMonth = now.getMonth();
+        const realDay   = now.getDate();
 
-        // 날짜 input 동기화
-        dateInput.value = dateKey;
+        const year  = adminNoticeViewYear;
+        const month = adminNoticeViewMonth;
+        const day   = adminNoticeViewDay;
+        const isCurrentMonth = (year === realYear && month === realMonth);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        // "오늘" 버튼 표시/숨김
+        // 헤더 설정
+        document.getElementById('adminNoticeMonthNum').textContent = month + 1;
+        document.getElementById('adminNoticeMonthEng').textContent = monthEngNames[month];
+        document.getElementById('adminNoticeMonthYear').textContent = year;
+
+        // "오늘" 버튼
         const btnToday = document.getElementById('btnAdminNoticeToday');
-        if (isToday) {
+        if (isCurrentMonth && day === realDay) {
           btnToday.classList.add('hidden');
         } else {
           btnToday.classList.remove('hidden');
         }
 
-        // 기존 공지사항 불러오기
+        // 날짜 스트립
+        renderAdminNoticeDateStrip(year, month, day, daysInMonth, realYear, realMonth, realDay);
+
+        // 날짜 정보
+        renderAdminNoticeDateInfo(year, month, day);
+
+        // 공지사항 작성 영역 갱신
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const textarea  = document.getElementById('noticeContentInput');
+        const saveBtn   = document.getElementById('btnSaveNotice');
+        const charCount = document.getElementById('noticeCharCount');
+
         const existing = findNoticeByDate(dateKey);
         if (existing) {
           textarea.value = existing.content;
@@ -3302,9 +3890,93 @@
         }
 
         hideAlert('noticeWriteAlert');
-
-        // 열람자 목록 렌더링
         renderNoticeReaderList(dateKey);
+      }
+
+      /**
+       * 관리자 공지사항 날짜 스트립을 렌더링합니다.
+       */
+      function renderAdminNoticeDateStrip(year, month, selectedDay, daysInMonth, realYear, realMonth, realDay) {
+        const dowKor = ['일', '월', '화', '수', '목', '금', '토'];
+        const strip = document.getElementById('adminNoticeDateStrip');
+        strip.innerHTML = '';
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const dateObj = new Date(year, month, d);
+          const dow = dateObj.getDay();
+          const isToday = (year === realYear && month === realMonth && d === realDay);
+          const isSel = d === selectedDay;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'diary-date-btn';
+          if (dow === 0) btn.classList.add('is-sun');
+          if (dow === 6) btn.classList.add('is-sat');
+          if (isToday)  btn.classList.add('is-today-date');
+          if (isSel)    btn.classList.add('is-selected');
+
+          btn.innerHTML = `
+            <span class="strip-dow">${dowKor[dow]}</span>
+            <span class="strip-day">${d}</span>
+          `;
+
+          btn.addEventListener('click', () => {
+            adminNoticeViewDay = d;
+            strip.querySelectorAll('.diary-date-btn').forEach(b => b.classList.remove('is-selected'));
+            btn.classList.add('is-selected');
+            renderAdminNoticeDateInfo(year, month, d);
+            // 공지사항 내용 갱신
+            const dk = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const textarea  = document.getElementById('noticeContentInput');
+            const saveBtn   = document.getElementById('btnSaveNotice');
+            const charCount = document.getElementById('noticeCharCount');
+            const ex = findNoticeByDate(dk);
+            if (ex) {
+              textarea.value = ex.content;
+              saveBtn.textContent = '공지사항 수정';
+              updateNoticeCharCount(ex.content.length, charCount);
+            } else {
+              textarea.value = '';
+              saveBtn.textContent = '공지사항 저장';
+              updateNoticeCharCount(0, charCount);
+            }
+            hideAlert('noticeWriteAlert');
+            renderNoticeReaderList(dk);
+            // "오늘" 버튼 갱신
+            const btnT = document.getElementById('btnAdminNoticeToday');
+            if (year === realYear && month === realMonth && d === realDay) {
+              btnT.classList.add('hidden');
+            } else {
+              btnT.classList.remove('hidden');
+            }
+          });
+
+          strip.appendChild(btn);
+        }
+
+        requestAnimationFrame(() => {
+          const selBtn = strip.querySelector('.is-selected');
+          if (selBtn) selBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        });
+      }
+
+      /**
+       * 관리자 공지사항 날짜 정보 영역을 갱신합니다.
+       */
+      function renderAdminNoticeDateInfo(year, month, day) {
+        const dowKorFull = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dateObj = new Date(year, month, day);
+        const dow = dateObj.getDay();
+
+        document.getElementById('adminNoticeInfoDay').textContent = day;
+
+        const infoDow = document.getElementById('adminNoticeInfoDow');
+        infoDow.textContent = dowKorFull[dow];
+        infoDow.className = 'info-dow';
+        if (dow === 0) infoDow.classList.add('is-sun');
+        if (dow === 6) infoDow.classList.add('is-sat');
+
+        document.getElementById('adminNoticeInfoLunar').textContent = solarToLunar(year, month + 1, day);
       }
 
       /**
@@ -3326,7 +3998,7 @@
        * 관리자 공지사항 저장 버튼 클릭을 처리합니다.
        */
       function handleSaveNotice() {
-        const dateKey   = adminNoticeViewDate;
+        const dateKey   = `${adminNoticeViewYear}-${String(adminNoticeViewMonth + 1).padStart(2, '0')}-${String(adminNoticeViewDay).padStart(2, '0')}`;
         const textarea  = document.getElementById('noticeContentInput');
         const saveBtn   = document.getElementById('btnSaveNotice');
         const content   = textarea.value.trim();
@@ -3600,12 +4272,19 @@
             `
             : '';
 
+          // dateKey가 'YYYY-MM-DD-HH' 형식이면 시간대 뱃지 표시
+          const hourPart   = review.dateKey.length > 10 ? review.dateKey.slice(-2) : null;
+          const hourBadge  = hourPart
+            ? `<span class="admin-review-hour-badge">${hourPart}시</span>`
+            : '';
+
           return `
             <div class="admin-review-item">
               <div class="admin-review-item-header">
                 <span class="admin-review-user-badge">
                   ${escapeHtml(review.userGrade)}학년 ${escapeHtml(review.userClass)}반 ${escapeHtml(review.userName)}
                 </span>
+                ${hourBadge}
               </div>
               <div class="admin-review-item-body">
                 <div class="admin-review-content">${escapeHtml(review.content)}</div>
@@ -3802,24 +4481,15 @@
         document.getElementById('tabNotice').addEventListener('click', () => switchUserTab('notice'));
         document.getElementById('tabReview').addEventListener('click', () => switchUserTab('review'));
 
-        // 공지사항 날짜 네비게이션
-        document.getElementById('btnNoticePrev').addEventListener('click', () => {
-          if (currentUser) navigateNoticeDate(currentUser, -1);
+        // 공지사항 월 네비게이션
+        document.getElementById('btnNoticeMonthPrev').addEventListener('click', () => {
+          if (currentUser) navigateNoticeMonth(currentUser, -1);
         });
-        document.getElementById('btnNoticeNext').addEventListener('click', () => {
-          if (currentUser) navigateNoticeDate(currentUser, 1);
+        document.getElementById('btnNoticeMonthNext').addEventListener('click', () => {
+          if (currentUser) navigateNoticeMonth(currentUser, 1);
         });
         document.getElementById('btnNoticeToday').addEventListener('click', () => {
-          if (currentUser) {
-            noticeViewDate = getTodayKey();
-            renderUserNoticeCard(currentUser);
-          }
-        });
-        document.getElementById('noticeDateInput').addEventListener('change', (e) => {
-          if (currentUser && e.target.value) {
-            noticeViewDate = e.target.value;
-            renderUserNoticeCard(currentUser);
-          }
+          if (currentUser) navigateNoticeToday(currentUser);
         });
 
         // 다이어리 월 네비게이션 버튼
@@ -3851,22 +4521,15 @@
         document.getElementById('adminTabNotice').addEventListener('click', () => switchAdminTab('notice'));
         document.getElementById('adminTabReview').addEventListener('click', () => switchAdminTab('review'));
 
-        // 관리자 공지사항 날짜 네비게이션
-        document.getElementById('btnAdminNoticePrev').addEventListener('click', () => {
-          navigateAdminNoticeDate(-1);
+        // 관리자 공지사항 월 네비게이션
+        document.getElementById('btnAdminNoticeMonthPrev').addEventListener('click', () => {
+          navigateAdminNoticeMonth(-1);
         });
-        document.getElementById('btnAdminNoticeNext').addEventListener('click', () => {
-          navigateAdminNoticeDate(1);
+        document.getElementById('btnAdminNoticeMonthNext').addEventListener('click', () => {
+          navigateAdminNoticeMonth(1);
         });
         document.getElementById('btnAdminNoticeToday').addEventListener('click', () => {
-          adminNoticeViewDate = getTodayKey();
-          renderAdminNoticeSection();
-        });
-        document.getElementById('adminNoticeDateInput').addEventListener('change', (e) => {
-          if (e.target.value) {
-            adminNoticeViewDate = e.target.value;
-            renderAdminNoticeSection();
-          }
+          navigateAdminNoticeToday();
         });
 
         // 공지사항 저장 버튼
